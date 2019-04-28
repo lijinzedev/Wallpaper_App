@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutionException;
 public class PictureActivity extends BaseActivity {
 
     private static final String TAG = "PictureActivity";
-    private static final String APP_AUTHORITY = "com.luyucheng.acgclub.fileprovider";
+   // private static final String APP_AUTHORITY = "com.luyucheng.acgclub.fileprovider";
     private String imageUrl;
     private LinearLayout control_layuout;
 
