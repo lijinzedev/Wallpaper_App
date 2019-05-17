@@ -15,18 +15,21 @@ class ParallaxImageRecyclerViewHelper private constructor() {
     private var target: ImageView? = null
     /** 目前图像所在的滚动父布局 */
     private var dependency: RecyclerView? = null
-
     /** target的宽度与dependency的宽度的比率 */
+
     private var widthRate = 1f
+
     private var heightRate = 1f
 
     private var horizontalBias = 0.5f
+
     private var verticalBias = 0.5f
 
     /**
      * 临时存放区
      * FIXME 之后加上生命周期
      */
+
     private val outLocation = IntArray(2)
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -48,10 +51,10 @@ class ParallaxImageRecyclerViewHelper private constructor() {
         recyclerView?.addOnScrollListener(onScrollListener) ?: return
     }
 
-    private fun computeImageMatrix(
+    private fun computeImageMatrix (
             target: ImageView,
             dependency: RecyclerView
-    ) {
+    )  {
         //FIXME 这部分可以只修改一次
         widthRate = target.width.toFloat() / dependency.width
         heightRate = target.height.toFloat() / dependency.height

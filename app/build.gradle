@@ -47,7 +47,7 @@ dependencies {
 
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-//    implementation 'com.github.MartinBZDQSM:ParallaxScrollImageView:v1.0'
+    implementation 'com.github.MartinBZDQSM:ParallaxScrollImageView:v1.0'
 
 //    implementation 'com.jaeger.statusbarutil:library:1.5.1'
 

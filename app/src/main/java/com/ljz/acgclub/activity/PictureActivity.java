@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 public class PictureActivity extends BaseActivity {
 
     private static final String TAG = "PictureActivity";
-   // private static final String APP_AUTHORITY = "com.luyucheng.acgclub.fileprovider";
+   // private static final String APP_AUTHORITY = "com.ljz.acgclub.fileprovider";
     private String imageUrl;
     private LinearLayout control_layuout;
 
@@ -41,6 +42,8 @@ public class PictureActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTranslucent();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         imageUrl = getIntent().getStringExtra("IMGURL");
         control_layuout = findViewById(R.id.control_layuout);
@@ -73,7 +76,10 @@ public class PictureActivity extends BaseActivity {
         else Toast.makeText(PictureActivity.this, "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
+    public void collect(View view){
 
+        requestPermission(imageUrl, 4);
+    }
     public void share(View view) {
         if (NetworkUtil.isNetworkAvailable(this))
             requestPermission(imageUrl, 3);
