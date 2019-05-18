@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
@@ -21,22 +23,29 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.ljz.acgclub.Application;
 import com.ljz.acgclub.R;
+import com.ljz.acgclub.db.Picture;
 import com.ljz.acgclub.glide.GlideApp;
 import com.ljz.acgclub.util.FileUtil;
 import com.ljz.acgclub.util.NetworkUtil;
 import com.ortiz.touchview.TouchImageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import org.litepal.LitePal;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class PictureActivity extends BaseActivity {
 
     private static final String TAG = "PictureActivity";
-   // private static final String APP_AUTHORITY = "com.ljz.acgclub.fileprovider";
+    // private static final String APP_AUTHORITY = "com.ljz.acgclub.fileprovider";
     private String imageUrl;
     private LinearLayout control_layuout;
+    FloatingActionButton fab;
+    private Picture picture;
+    private int collectflag; //收藏标签
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +54,17 @@ public class PictureActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
+        collectflag = getIntent().getIntExtra("collect", 0);
         imageUrl = getIntent().getStringExtra("IMGURL");
         control_layuout = findViewById(R.id.control_layuout);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                collect(view);
+            }
+        });
+
         TouchImageView touchImageView = findViewById(R.id.iv_full);
         new Thread(() -> {
             try {
@@ -61,6 +79,14 @@ public class PictureActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }).start();
+        if (control_layuout.getVisibility() == View.VISIBLE) {
+
+            control_layuout.setVisibility(View.GONE);
+            fab.hide();
+        } else {
+            control_layuout.setVisibility(View.VISIBLE);
+            fab.show();
+        }
     }
 
 
@@ -76,10 +102,11 @@ public class PictureActivity extends BaseActivity {
         else Toast.makeText(PictureActivity.this, "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
-    public void collect(View view){
+    public void collect(View view) {
 
         requestPermission(imageUrl, 4);
     }
+
     public void share(View view) {
         if (NetworkUtil.isNetworkAvailable(this))
             requestPermission(imageUrl, 3);
@@ -121,6 +148,7 @@ public class PictureActivity extends BaseActivity {
                     }
                 });
     }
+
     public void MySetWallPaper(String path) {
         WallpaperManager mWallManager = WallpaperManager.getInstance(Application.getInstance());
         try {
@@ -133,6 +161,7 @@ public class PictureActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
     public void baseTask(final String url, int flag) {
 
         new AsyncTask<Void, Integer, File>() {
@@ -196,6 +225,12 @@ public class PictureActivity extends BaseActivity {
                     //创建分享的Dialog
                     share_intent = Intent.createChooser(share_intent, "分享到");
                     startActivity(share_intent);
+                } else if (flag == 4) {
+                    picture = new Picture();
+                    picture.setUrl(imageUrl);
+                    picture.save();
+                    //  List <Picture> pictures = LitePal.findAll(Picture.class);
+                    //   Log.d(TAG, "onPostExecute: "+pictures.size());
                 }
             }
 
@@ -222,9 +257,16 @@ public class PictureActivity extends BaseActivity {
     }
 
     public void changeVisible(View view) {
-        if (control_layuout.getVisibility() == View.VISIBLE)
+        if (control_layuout.getVisibility() == View.VISIBLE) {
+
             control_layuout.setVisibility(View.GONE);
-        else
+            fab.hide();
+        } else {
             control_layuout.setVisibility(View.VISIBLE);
+            if (collectflag == 11)
+                fab.hide();
+            else
+                fab.show();
+        }
     }
 }

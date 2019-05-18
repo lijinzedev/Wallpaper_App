@@ -1,6 +1,7 @@
 package com.ljz.acgclub.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.ljz.acgclub.R;
 import com.ljz.acgclub.adapter.ViewPagerAdapter;
@@ -31,6 +33,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTranslucent();
+
         setContentView(R.layout.activity_main);
 //        final RxPermissions rxPermissions = new RxPermissions(this);
 //        rxPermissions
@@ -156,9 +159,22 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    public  void coolect(View view){
+        Intent intent=new Intent(this,CollectActivity.class);
+        startActivity(intent);
 
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+    /** 根据百分比改变颜色透明度 */
+//    public int changeAlpha(int color, float fraction) {
+//        int red = Color.red(color);
+//        int green = Color.green(color);
+//        int blue = Color.blue(color);
+//        int alpha = (int) (Color.alpha(color) * fraction);
+//        return Color.argb(alpha, red, green, blue);
+//    }
+
 }
