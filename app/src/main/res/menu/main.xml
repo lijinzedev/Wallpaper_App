@@ -6,4 +6,5 @@
         android:icon="@drawable/ic_clear_cache"
         android:title="清除缓存"
         app:showAsAction="always" />
+
 </menu>

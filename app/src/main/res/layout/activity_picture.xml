@@ -14,11 +14,20 @@
         <com.ortiz.touchview.TouchImageView
             android:id="@+id/iv_full"
             android:layout_width="match_parent"
+            android:transitionName="sharedView"
             android:layout_height="match_parent"
             android:contentDescription="@string/image"
             android:onClick="changeVisible"
             android:scaleType="centerCrop" />
-
+        <ImageView
+            android:id="@+id/jiazai"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:transitionName="sharedView"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/image"
+            android:visibility="gone"
+            android:scaleType="centerCrop" />
         <LinearLayout
             android:id="@+id/control_layuout"
             android:layout_width="match_parent"

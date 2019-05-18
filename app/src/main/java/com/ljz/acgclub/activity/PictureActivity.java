@@ -1,23 +1,30 @@
 package com.ljz.acgclub.activity;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
@@ -28,13 +35,11 @@ import com.ljz.acgclub.glide.GlideApp;
 import com.ljz.acgclub.util.FileUtil;
 import com.ljz.acgclub.util.NetworkUtil;
 import com.ortiz.touchview.TouchImageView;
+import com.race604.drawable.wave.WaveDrawable;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import org.litepal.LitePal;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class PictureActivity extends BaseActivity {
@@ -46,6 +51,8 @@ public class PictureActivity extends BaseActivity {
     FloatingActionButton fab;
     private Picture picture;
     private int collectflag; //收藏标签
+    private TouchImageView touchImageView;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,14 @@ public class PictureActivity extends BaseActivity {
         imageUrl = getIntent().getStringExtra("IMGURL");
         control_layuout = findViewById(R.id.control_layuout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        /**
+         * 缓冲动画
+         */
+        WaveDrawable waveDrawable = new WaveDrawable(this, R.drawable.chrome_logo);
+        imageView = findViewById(R.id.jiazai);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.setImageDrawable(waveDrawable);
+        waveDrawable.setIndeterminate(true);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,14 +80,19 @@ public class PictureActivity extends BaseActivity {
             }
         });
 
-        TouchImageView touchImageView = findViewById(R.id.iv_full);
+        touchImageView = findViewById(R.id.iv_full);
+
+
         new Thread(() -> {
             try {
                 Bitmap bitmap = GlideApp.with(PictureActivity.this)
                         .asBitmap()
                         .load(imageUrl)
                         .submit().get();
-                runOnUiThread(() -> touchImageView.setImageBitmap(bitmap));
+                runOnUiThread(() -> {
+                    imageView.setVisibility(View.GONE);
+                    touchImageView.setImageBitmap(bitmap);
+                });
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -226,13 +246,59 @@ public class PictureActivity extends BaseActivity {
                     share_intent = Intent.createChooser(share_intent, "分享到");
                     startActivity(share_intent);
                 } else if (flag == 4) {
-                    picture = new Picture();
-                    picture.setUrl(imageUrl);
-                    picture.save();
-                    //  List <Picture> pictures = LitePal.findAll(Picture.class);
-                    //   Log.d(TAG, "onPostExecute: "+pictures.size());
+//                    picture = new Picture();
+//                    picture.setUrl(imageUrl);
+//                    picture.save();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PictureActivity.this,R.style.DialogIOS);
+                    View view = LayoutInflater.from(PictureActivity.this).inflate(R.layout.dialog_choosepage, null);
+                    TextView cancel = view.findViewById(R.id.choosepage_cancel);
+                    TextView sure = view.findViewById(R.id.choosepage_sure);
+                    final EditText tag = view.findViewById(R.id.tag);
+                    final EditText lable = view.findViewById(R.id.lable);
+                    final Dialog dialog = builder.create();
+                    dialog.show();
+                    dialog.getWindow().setContentView(view);
+                    //使editext可以唤起软键盘
+                    dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(PictureActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                    sure.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String thetag = tag.getText().toString();
+                            String thelable = lable.getText().toString();
+
+                            picture = new Picture();
+                            picture.setUrl(imageUrl);
+                            if ("".equals(thelable)) {
+                                Toast.makeText(PictureActivity.this, "亲，请输入标题哦", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                picture.setLabel(thelable);
+                            }
+                            if ("".equals(thetag)) {
+                                picture.setTag("love");
+                            } else {
+
+                                picture.setTag(thetag);
+                            }
+                            picture.save();
+                            Toast.makeText(PictureActivity.this, "已收藏", Toast.LENGTH_SHORT).show();
+
+                            dialog.dismiss();
+                        }
+                    });
                 }
+
+                //  List <Picture> pictures = LitePal.findAll(Picture.class);
+                //   Log.d(TAG, "onPostExecute: "+pictures.size());
             }
+
 
             @Override
             protected void onProgressUpdate(Integer... values) {
@@ -268,5 +334,22 @@ public class PictureActivity extends BaseActivity {
             else
                 fab.show();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//           finishAfterTransition();
+//        }else
+        finish();
+        overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
     }
 }

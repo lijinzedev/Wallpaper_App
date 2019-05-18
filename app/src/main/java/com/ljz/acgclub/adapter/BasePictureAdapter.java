@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.ljz.acgclub.Application;
 import com.ljz.acgclub.ParallaxImageRecyclerViewHelper;
 import com.ljz.acgclub.R;
+import com.ljz.acgclub.activity.CollectActivity;
 import com.ljz.acgclub.glide.GlideApp;
 
 import java.util.List;
@@ -36,7 +39,7 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String url, int position);
+        void onItemClick(String url, int position, View view);
 
         void onItemLongClick(String url, int position);
     }
@@ -48,7 +51,7 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
         final ViewHolder holder = new ViewHolder(view);
         holder.view.setOnClickListener(view1 -> {
             String url = urlList.get(holder.getAdapterPosition());
-            listener.onItemClick(url, holder.getAdapterPosition());
+            listener.onItemClick(url, holder.getAdapterPosition(), holder.view);
         });
         holder.view.setOnLongClickListener(v -> {
             String url = urlList.get(holder.getAdapterPosition());
@@ -61,21 +64,61 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String imageUrl = urlList.get(holder.getAdapterPosition());
-        SimpleTarget target = new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                holder.parallaxImageView.setImageBitmap(resource);
-            }
-        };
-        GlideApp.with(mContext)
+//        SimpleTarget target = new SimpleTarget<Bitmap>() {
+//            @Override
+//            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                holder.parallaxImageView.setImageBitmap(resource);
+//            }
+//        };
+//        GlideApp.with(mContext)
+//                .asBitmap()
+//                .load(imageUrl)
+//                .into(target);
+        GlideApp.with(Application.mContext)
                 .asBitmap()
+                .placeholder(R.drawable.img_avatar_01)
+                .error(R.drawable.img_avatar_01)
+                .transition(BitmapTransitionOptions.withCrossFade())
                 .load(imageUrl)
-                .into(target);
+                .into(holder.parallaxImageView);
         ParallaxImageRecyclerViewHelper.Companion.setup(recyclerView, holder.parallaxImageView);
 //        GlideApp.with(mContext).load(url).into(holder.parallaxImageView);
 //        diskCacheStrategy(DiskCacheStrategy.NONE)
 
     }
+//  @Override
+//  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+//      String imageUrl = urlList.get(holder.getAdapterPosition());
+//
+//      String tag = position + "";
+//      holder.parallaxImageView.setTag(tag);
+//
+//      SimpleTarget target = new SimpleTarget<Bitmap>() {
+//          @Override
+//          public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//              //根据tag判断是不是需要设置给ImageView
+//              if (tag == holder.parallaxImageView.getTag()) {
+//                  holder.parallaxImageView.setImageBitmap(resource);
+//              }
+//          }
+//      };
+//      GlideApp.with(mContext)
+//              .asBitmap()
+//              .load(imageUrl)
+//              .into(target);
+//
+////        GlideApp.with(Application.mContext)
+////                .asBitmap()
+////                .placeholder(R.drawable.bg_withe)
+////                .error(R.drawable.bg_withe)
+////                .transition(BitmapTransitionOptions.withCrossFade())
+////                .load(imageUrl)
+////                .into(touchImageView);
+//      ParallaxImageRecyclerViewHelper.Companion.setup(recyclerView, holder.parallaxImageView);
+////        GlideApp.with(mContext).load(url).into(holder.parallaxImageView);
+////        diskCacheStrategy(DiskCacheStrategy.NONE)
+//
+//  }
 
     @Override
     public int getItemCount() {

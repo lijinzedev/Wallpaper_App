@@ -1,6 +1,8 @@
 package com.ljz.acgclub.fragment;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -178,12 +180,21 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     }
 
     @Override
-    public void onItemClick(String url, int position) {
+    public void onItemClick(String url, int position,View view) {
 //        Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
         if (NetworkUtil.isNetworkAvailable(getContext())) {
             Intent intent = new Intent(getContext(), PictureActivity.class);
             intent.putExtra("IMGURL", url);
-            startActivity(intent);
+
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity(), view,"sharedView").toBundle());
+//                }
+//            }else {
+                startActivity(intent);
+
+   //         }
+            getActivity().overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
