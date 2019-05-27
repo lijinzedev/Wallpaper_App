@@ -5,12 +5,16 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.ljz.acgclub"
+        applicationId "com.wallpaper.anime"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        //启用renderscript
+        renderscriptTargetApi 25
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
@@ -50,7 +54,7 @@ dependencies {
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     implementation 'com.github.MartinBZDQSM:ParallaxScrollImageView:v1.0'
-
+    implementation 'com.github.abdularis:parallaximageview:1.1'
 //    implementation 'com.jaeger.statusbarutil:library:1.5.1'
     implementation 'org.litepal.android:core:2.0.0'
     implementation 'com.github.MikeOrtiz:TouchImageView:1.4.0'
@@ -58,6 +62,9 @@ dependencies {
     implementation 'me.yuqirong:cardswipelayout:1.0.0'
     implementation 'com.race604.waveloading:library:1.1.1' //动画加载
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0' //diglog
+    implementation 'com.yayandroid:ParallaxRecyclerView:1.1'
+    implementation 'com.squareup.picasso:picasso:2.5.2' //测试picasso
+    implementation 'com.gjiazhe:scrollparallaximageview:1.0' //滚动视图
 }
 repositories {
     mavenCentral()

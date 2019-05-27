@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ljz.acgclub">
+    package="com.wallpaper.anime">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
     <application
-        android:name=".Application"
+        android:name="com.wallpaper.anime.Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_logo"
         android:label="@string/app_name"
@@ -18,11 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
-            android:name="com.ljz.acgclub.glide.GlideConfiguration"
+            android:name="com.wallpaper.anime.glide.GlideConfiguration"
             android:value="GlideModule" />
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.wallpaper.anime.activity.LoadActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +33,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.ljz.acgclub.fileprovider"
+            android:authorities="com.wallpaper.anime.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -42,10 +42,15 @@
         </provider>
 
         <activity
-            android:name=".activity.PictureActivity"
+            android:name="com.wallpaper.anime.activity.PictureActivity"
+            android:largeHeap="true"
             android:label="@string/title_activity_picture"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.CollectActivity"
+        <activity
+            android:name="com.wallpaper.anime.activity.MainActivity"
+            android:largeHeap="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="com.wallpaper.anime.activity.CollectActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="我的收藏"
             />
