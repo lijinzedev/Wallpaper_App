@@ -21,12 +21,14 @@ import com.wallpaper.anime.bean.AcgBean;
 import com.wallpaper.anime.minterface.AcgApi;
 import com.wallpaper.anime.util.Constant;
 import com.wallpaper.anime.util.NetworkUtil;
+import com.wallpaper.anime.util.SSLSocketClient;
 import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import martinbzdqsm.com.parallaxscrollimageview_master.ParallaxRecyclerViewController;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -149,9 +151,14 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
         if (NetworkUtil.isNetworkAvailable(getContext())) {
             int curpage = Constant.getRandomPage(category);
             Log.i(TAG, "requestData: " + "加载数据" + curpage);
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
+            builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://www.rabtman.com")
                     .addConverterFactory(GsonConverterFactory.create())
+                    .client(builder.build())
                     .build();
             AcgApi acgApi = retrofit.create(AcgApi.class);
             Call<AcgBean> call = acgApi.ACG_BEAN_CALL(category, curpage);
