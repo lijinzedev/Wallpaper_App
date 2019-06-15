@@ -2,18 +2,32 @@ package com.wallpaper.anime.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
+import com.wallpaper.anime.Application;
+import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
 import com.wallpaper.anime.adapter.BasePictureAdapter;
@@ -23,6 +37,10 @@ import com.wallpaper.anime.util.Constant;
 import com.wallpaper.anime.util.NetworkUtil;
 import com.wallpaper.anime.util.SSLSocketClient;
 import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +53,19 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 
 public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemClickListener, View.OnClickListener {
     private ParallaxRecyclerViewController mParallaxRecyclerViewController;
     private static final String TAG = "BaseFragment";
-    private List<String> urlList = new ArrayList<>();
+    private List<String> url_string_list=new ArrayList<>();
     private RecyclerView recyclerView;
     private BasePictureAdapter adapter;
     private String category;
+    private View view;
+
+    private SwipeRefreshLayout swipeRefresh;
 //    private int curpage = 1;
 
     //Fragment的View加载完毕的标记
@@ -56,6 +79,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
         BaseFragment fragment = new BaseFragment();
         args.putString("CATEGORY", category);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -63,9 +87,16 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base, null);
-        init(view);
+         EventBus.getDefault().register(this);
+         view = inflater.inflate(R.layout.fragment_base, null);
+          initView(view);
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -99,7 +130,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
 
     void init(View v) {
         assert getArguments() != null;
-        category = getArguments().getString("CATEGORY");
+
         recyclerView = v.findViewById(R.id.base_recyclerview);
 
 
@@ -111,50 +142,76 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
            ParallaxRecyclerViewController mParallaxRecyclerViewController = new ParallaxRecyclerViewController(linearLayoutManager, R.id.base_fragment_item_image);
            recyclerView.addOnScrollListener(mParallaxRecyclerViewController);
 
-        initLoadMoreListener();
 
-        adapter = new BasePictureAdapter(getContext(), recyclerView, urlList, this);
+
+        adapter = new BasePictureAdapter(getContext(), recyclerView, url_string_list, this);
         recyclerView.setAdapter(adapter);
         FloatingActionButton floatingActionButton = v.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
     }
-
-    private void initLoadMoreListener() {
-        //对Recyclerview 的一个滑动监听
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int lastVisibleItem;
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                //判断RecyclerView的状态 是空闲时，同时，是最后一个可见的ITEM时才加载
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == adapter.getItemCount()) {
-                    if (NetworkUtil.isNetworkAvailable(getContext())) {
-//                        curpage = Constant.getRandomPage(category);
-                        requestData();
-                    }
-                }
+    private Handler mhandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what==1) {
+                //get message
+                initView(view);
             }
+        }
+    };
 
+    private void initView(View v) {
+        category = getArguments().getString("CATEGORY");
+        RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.base_recyclerview);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new BasePictureAdapter(getContext(), recyclerView, url_string_list, this);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        AnimationSet set = new AnimationSet(false);
+        WindowManager wm =getActivity().getWindowManager();
+        int height = wm.getDefaultDisplay().getHeight();
+        Animation animation = new TranslateAnimation(0,0,height,0); //translateanimation
+        animation.setDuration(1000);
+        animation.setInterpolator(new AccelerateInterpolator(1.0F));
+        set.addAnimation(animation);
+        LayoutAnimationController controller = new LayoutAnimationController(set, 0);
+        controller.setOrder(LayoutAnimationController.ORDER_NORMAL);//set order；
+        controller.setDelay(0.2f);//set LayoutAnimationController；
+        recyclerView.setLayoutAnimation(controller);   //set animation
+        // 外部对RecyclerView设置监听
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                //最后一个可见的ITEM
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                assert layoutManager != null;
-                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                // 查看源码可知State有三种状态：SCROLL_STATE_IDLE（静止）、SCROLL_STATE_DRAGGING（上升）、SCROLL_STATE_SETTLING（下落）
+                if (newState == SCROLL_STATE_IDLE) { // 滚动静止时才加载图片资源，极大提升流畅度
+                    adapter.setScrolling(false);
+                    adapter.notifyDataSetChanged(); // notify调用后onBindViewHolder会响应调用
+                } else
+                    adapter.setScrolling(true);
+                super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+        recyclerView.setAdapter(adapter);
+        swipeRefresh = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestData();
+            }
+        });
+        FloatingActionButton floatingActionButton = v.findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(this);
     }
 
     public void requestData() {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
             int curpage = Constant.getRandomPage(category);
-            Log.i(TAG, "requestData: " + "加载数据" + curpage);
+            Log.i(TAG, "requestData: " + "加载数据" + curpage+"链表长度: "+url_string_list.size());
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
             builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
-
+            url_string_list.clear();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://www.rabtman.com")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -169,9 +226,15 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
                         AcgBean acgBean = response.body();
                         assert acgBean != null;
                         for (AcgBean.DataBean dataBean : acgBean.getData()) {
-                            urlList.addAll(dataBean.getImgUrls());
+                            //urlList.add(dataBean);
+                            url_string_list.addAll(dataBean.getImgUrls());
                         }
-                        adapter.notifyDataSetChanged();
+                        Log.d(TAG, "onResponse: "+"链表长度: "+url_string_list.size());
+                        swipeRefresh.setRefreshing(false);
+                      //  adapter.notifyDataSetChanged();
+                        mhandler.sendEmptyMessage(1);
+                        EventBus.getDefault().post(
+                                new SimpleEventBus(2,"end"));
                     }
                 }
 
@@ -185,9 +248,8 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
 
     @Override
     public void onClick(View v) {
-        urlList.clear();
+        url_string_list.clear();;
         adapter.notifyDataSetChanged();
-//        curpage = Constant.getRandomPage(category);
         requestData();
     }
 
@@ -195,17 +257,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Override
     public void onItemClick(String url, int position) {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
-            Intent intent = new Intent(getContext(), PictureActivity.class);
-            intent.putExtra("IMGURL", url);
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity(), view,"sharedView").toBundle());
-//                }
-//            }else {
-            startActivity(intent);
-
-            //         }
+            startActivity( PictureActivity.newIntent(Application.getInstance(),url_string_list.get(position),url_string_list));
             getActivity().overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
     }
@@ -215,6 +267,14 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
 //        Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
 //        requestPermission(url);
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(SimpleEventBus event) {
 
+        if (event.getId() == 1) {
+            Log.w(TAG, "onEventMainThread: "+"BaseFragment 刷新" );
+            Snackbar.make(swipeRefresh, R.string.reing, Snackbar.LENGTH_SHORT).show();
+            requestData();
+        }
+    }
 
 }

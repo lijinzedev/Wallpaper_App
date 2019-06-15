@@ -1,6 +1,7 @@
 package com.wallpaper.anime.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.adapter.ViewPagerAdapter;
@@ -21,28 +23,16 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "LoadActivity";
     private BottomNavigationView bottomNavigationView;
+
     MenuItem prevMenuItem;
     private ViewPager viewPager;
-//    private String title[] = {"moeimg", "cosplay", "gamersky"};
-//    private BaseFragment baseFragment0, baseFragment1, baseFragment2;
-//    private Fragment[] fragments = {baseFragment0, baseFragment1, baseFragment2};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTranslucent();
 
         setContentView(R.layout.activity_main);
-//        final RxPermissions rxPermissions = new RxPermissions(this);
-//        rxPermissions
-//                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                .subscribe(granted -> {
-//                    if (granted) {
-//                        FileUtil.deleteCache();
-//                    } else {
-//
-//                    }
-//                });
+
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -69,8 +59,6 @@ public class MainActivity extends BaseActivity {
                 });
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 

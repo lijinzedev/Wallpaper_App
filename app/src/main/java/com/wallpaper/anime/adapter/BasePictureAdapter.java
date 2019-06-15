@@ -1,19 +1,21 @@
 package com.wallpaper.anime.adapter;
-
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ImageView;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.glide.GlideApp;
+import com.wallpaper.anime.util.ResMsg;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
-import martinbzdqsm.com.parallaxscrollimageview_master.ParallaxImageView;
 
 
 public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.ViewHolder> {
@@ -21,15 +23,18 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
     private static final String TAG = "BasePictureAdapter";
     private Context mContext;
     private BasePictureAdapter.OnItemClickListener listener;
-    private List<String> urlList;
+    protected boolean isScrolling = false;
     private RecyclerView recyclerView;
-
-
+    private List<String> urlList=new ArrayList<>();
+    public void setScrolling(boolean scrolling) {
+        isScrolling = scrolling;
+    }
     public BasePictureAdapter(Context mContext, RecyclerView recyclerView, List<String> urlList, BasePictureAdapter.OnItemClickListener listener) {
         this.mContext = mContext;
         this.urlList = urlList;
         this.listener = listener;
         this.recyclerView = recyclerView;
+
     }
 
     public interface OnItemClickListener {
@@ -58,16 +63,16 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String imageUrl = urlList.get(holder.getAdapterPosition());
-//        SimpleTarget target = new SimpleTarget<Bitmap>() {
-//            @Override
-//            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-//                holder.parallaxImageView.setImageBitmap(resource);
-//            }
-//        };
-        GlideApp.with(mContext)
-                .asBitmap()
-                .load(imageUrl)
-                .into(holder.parallaxImageView);
+        if (!TextUtils.isEmpty(imageUrl) && !isScrolling) {
+            GlideApp.with(mContext)
+                    .asBitmap()
+                    .load(imageUrl)
+                    .into(holder.parallaxImageView);
+        } else {
+
+            holder.parallaxImageView.setImageBitmap(ResMsg.bmp);
+        }
+
   //      ParallaxImageRecyclerViewHelper.Companion.setup(recyclerView, holder.parallaxImageView);
 //        GlideApp.with(mContext).load(url).into(holder.parallaxImageView);
 //        diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -82,7 +87,7 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         View view;
-        ParallaxImageView parallaxImageView;
+        ImageView parallaxImageView;
 
 
         ViewHolder(View view) {

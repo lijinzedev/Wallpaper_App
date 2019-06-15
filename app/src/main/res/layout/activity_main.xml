@@ -27,7 +27,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_collapseMode="pin"
-                app:layout_scrollFlags="scroll|enterAlways"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:popupTheme="@style/CustomToolbar">
                 <TextView
                     android:layout_width="wrap_content"

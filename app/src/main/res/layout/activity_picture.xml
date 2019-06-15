@@ -10,24 +10,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <com.ortiz.touchview.TouchImageView
-            android:id="@+id/iv_full"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_picture"
             android:layout_width="match_parent"
-            android:transitionName="sharedView"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/image"
-            android:onClick="changeVisible"
-            android:scaleType="centerCrop" />
-        <ImageView
-            android:id="@+id/jiazai"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:transitionName="sharedView"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/image"
-            android:visibility="gone"
-            android:scaleType="centerCrop" />
+            android:layout_height="match_parent">
+        </android.support.v4.view.ViewPager>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:paddingTop="16dp"
+            android:background="#00000000"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            />
+
+
         <LinearLayout
             android:id="@+id/control_layuout"
             android:layout_width="match_parent"

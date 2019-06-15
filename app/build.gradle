@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.yayandroid:ParallaxRecyclerView:1.1'
     implementation 'com.squareup.picasso:picasso:2.5.2' //测试picasso
     implementation 'com.gjiazhe:scrollparallaximageview:1.0' //滚动视图
+    implementation 'org.greenrobot:eventbus:3.0.0'
 }
 repositories {
     mavenCentral()

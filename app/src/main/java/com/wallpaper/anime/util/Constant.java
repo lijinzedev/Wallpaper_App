@@ -11,9 +11,12 @@ public class Constant {
     public static int getRandomPage(String type) {
         int page = 1;
         int MIN = 1;
-        int MOEIMG = 213;
-        int COSPLAY = 129;
-        int GAMERSKY = 60;
+//        int MOEIMG = 213;
+//        int COSPLAY = 129;
+//        int GAMERSKY = 60;
+        int MOEIMG = 30;
+        int COSPLAY = 39;
+        int GAMERSKY = 20;
         switch (type) {
             case "moeimg":
                 page = new Random().nextInt(MOEIMG) % (MOEIMG - MIN + 1) + MIN;
