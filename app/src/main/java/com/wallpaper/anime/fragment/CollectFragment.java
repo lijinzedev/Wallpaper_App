@@ -1,26 +1,26 @@
-package com.wallpaper.anime.activity;
+package com.wallpaper.anime.fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
-
 import com.wallpaper.anime.Application;
 import com.wallpaper.anime.R;
-
+import com.wallpaper.anime.activity.PictureActivity;
 import com.wallpaper.anime.cardtest.CardItemTouchHelperCallback;
 import com.wallpaper.anime.cardtest.CardLayoutManager;
 import com.wallpaper.anime.db.Picture;
@@ -32,43 +32,36 @@ import org.litepal.LitePal;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import me.yuqirong.cardswipelayout.CardConfig;
 import me.yuqirong.cardswipelayout.OnSwipeListener;
 
-import static org.litepal.LitePalApplication.getContext;
-
-public class CollectActivity extends BaseActivity {
-    private static final String TAG = "CollectActivity";
+public class CollectFragment extends Fragment {
+    private static final String TAG = "CollectFragment";
     private List<Picture> list = new ArrayList<>();
     private List<Picture> bufferlist = new ArrayList<>();
     private List<Bitmap> bitmaps = new ArrayList<>();
     private RecyclerView recyclerView;
     private CardItemTouchHelperCallback cardCallback;
     private ImageView blurringView;
-
+    private View view;
+    public static CollectFragment createAcgFragment() {
+        CollectFragment fragment = new CollectFragment();
+        return fragment;
+    }
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.collect_activity);
-        // list = LitePal.findAll(Picture.class);
-        blurringView = findViewById(R.id.image_view);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        view = inflater.inflate(R.layout.collect_fragment, null);
+        blurringView =view.findViewById(R.id.image_view);
         list = LitePal.order("id desc").limit(5).find(Picture.class);
         if (list.size() != 0) {
             for (Picture picture : list) {
                 bufferlist.add(picture);
             }
         }
-
-
-        Log.d(TAG, "onCreate: " + list.size());
-        for (int i = 0; i < list.size(); i++) {
-            Log.d(TAG, "onCreate: " + list.get(i).getUrl());
-        }
         //显示搜索框控件
-        SearchView searchView = (SearchView) findViewById(R.id.serachview);
+        SearchView searchView = (SearchView) view.findViewById(R.id.serachview);
         //设置查询提示字符串
         searchView.setQueryHint("请输入搜索内容");
         //设置搜索图标是否显示在搜索框内
@@ -86,8 +79,8 @@ public class CollectActivity extends BaseActivity {
 
                 recyclerView.getAdapter().notifyDataSetChanged();
                 cardCallback.dataChange(list);
-                if (list == null) {
-                    Toast.makeText(CollectActivity.this, "搜索失败", Toast.LENGTH_SHORT).show();
+                if (list == null&&getActivity()!=null) {
+                    Toast.makeText(getActivity(), "搜索失败", Toast.LENGTH_SHORT).show();
                 } // Toast.makeText(CollectActivity.this, "aaaaaa", Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -100,18 +93,19 @@ public class CollectActivity extends BaseActivity {
         initData();
         initView();
 
+        return view;
     }
 
     private void initView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new MyAdapter());
+        recyclerView.setAdapter(new CollectFragment.MyAdapter());
         cardCallback = new CardItemTouchHelperCallback(recyclerView.getAdapter(), list);
         cardCallback.setOnSwipedListener(new OnSwipeListener<Picture>() {
 
             @Override
             public void onSwiping(RecyclerView.ViewHolder viewHolder, float ratio, int direction) {
-                MyAdapter.MyViewHolder myHolder = (MyAdapter.MyViewHolder) viewHolder;
+                CollectFragment.MyAdapter.MyViewHolder myHolder = (CollectFragment.MyAdapter.MyViewHolder) viewHolder;
                 viewHolder.itemView.setAlpha(1 - Math.abs(ratio) * 0.2f);
                 if (direction == CardConfig.SWIPING_LEFT) {
                     myHolder.dislikeImageView.setAlpha(Math.abs(ratio));
@@ -126,7 +120,7 @@ public class CollectActivity extends BaseActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, Picture o, int direction) {
-                MyAdapter.MyViewHolder myHolder = (MyAdapter.MyViewHolder) viewHolder;
+                CollectFragment.MyAdapter.MyViewHolder myHolder = (CollectFragment.MyAdapter.MyViewHolder) viewHolder;
                 viewHolder.itemView.setAlpha(1f);
                 myHolder.dislikeImageView.setAlpha(0f);
                 myHolder.likeImageView.setAlpha(0f);
@@ -160,12 +154,11 @@ public class CollectActivity extends BaseActivity {
             }
         }
     }
-
     private class MyAdapter extends RecyclerView.Adapter {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
-            final MyViewHolder holder = new MyViewHolder(view);
+            final CollectFragment.MyAdapter.MyViewHolder holder = new CollectFragment.MyAdapter.MyViewHolder(view);
             view.setOnClickListener((view1) -> {
                 holder.avatarImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -182,7 +175,7 @@ public class CollectActivity extends BaseActivity {
 
 
             });
-            return new MyViewHolder(view);
+            return new CollectFragment.MyAdapter.MyViewHolder(view);
         }
 
 
@@ -192,8 +185,8 @@ public class CollectActivity extends BaseActivity {
                 return;
             }
             Picture imageUrl = list.get(holder.getAdapterPosition());
-            ((MyViewHolder) holder).tag.setText(imageUrl.getTag());
-            ((MyViewHolder) holder).lable.setText(imageUrl.getLabel());
+            ((CollectFragment.MyAdapter.MyViewHolder) holder).tag.setText(imageUrl.getTag());
+            ((CollectFragment.MyAdapter.MyViewHolder) holder).lable.setText(imageUrl.getLabel());
 //            ((MyViewHolder) holder).avatarImageView.setTag( position);
 //             Object tag= ((MyViewHolder) holder).avatarImageView.getTag();
 ////            SimpleTarget target = new SimpleTarget<Bitmap>() {
@@ -216,7 +209,7 @@ public class CollectActivity extends BaseActivity {
                     .error(R.drawable.white)
                     .transition(BitmapTransitionOptions.withCrossFade())
                     .load(imageUrl.getUrl())
-                    .into(((MyViewHolder) holder).avatarImageView);
+                    .into(((CollectFragment.MyAdapter.MyViewHolder) holder).avatarImageView);
 
             GlideApp.with(Application.mContext)
                     .asBitmap()
@@ -258,12 +251,5 @@ public class CollectActivity extends BaseActivity {
             }
 
         }
-    }
-
-    public void back(View view) {
-
-
-        finish();
-
     }
 }

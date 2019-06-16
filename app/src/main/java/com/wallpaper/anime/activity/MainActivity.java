@@ -1,167 +1,239 @@
 package com.wallpaper.anime.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.wallpaper.anime.R;
-import com.wallpaper.anime.adapter.ViewPagerAdapter;
-import com.wallpaper.anime.fragment.BaseFragment;
-import com.wallpaper.anime.glide.GlideCatchUtil;
-import com.wallpaper.anime.util.FileUtil;
-import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.wallpaper.anime.fragment.AcgFragment;
+import com.wallpaper.anime.fragment.CollectFragment;
+import com.wallpaper.anime.menu.DrawerAdapter;
+import com.wallpaper.anime.menu.DrawerItem;
+import com.wallpaper.anime.menu.SimpleItem;
+import com.wallpaper.anime.menu.SpaceItem;
+import com.wallpaper.slidingrootnav.SlidingRootNav;
+import com.wallpaper.slidingrootnav.SlidingRootNavBuilder;
 
-public class MainActivity extends BaseActivity {
-    private static final String TAG = "LoadActivity";
-    private BottomNavigationView bottomNavigationView;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    MenuItem prevMenuItem;
-    private ViewPager viewPager;
+public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnItemSelectedListener {
+    private static final int POS_DASHBOARD = 0;
+    private static final int POS_ACCOUNT = 1;
+    private static final int POS_MESSAGES = 2;
+    private static final int POS_CART = 3;
+    private static final int POS_LOGOUT = 5;
+    private String[] screenTitles;
+    private Drawable[] screenIcons;
+    private SlidingRootNav slidingRootNav;
+    private Map<String, Fragment> map = new HashMap<>();
+    private FragmentManager fragmentManager;
+
+    private Fragment currentFragment = new Fragment();
+    private List<Fragment> fragments = new ArrayList<>();
+    private static final String CURRENT_FRAGMENT = "STATE_FRAGMENT_SHOW";
+    private int currentIndex = 0;
+    private AcgFragment acgFragment;
+    private CollectFragment collectFragment;
+
+    private static final String TAG = "MainActivity";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setTranslucent();
-
         setContentView(R.layout.activity_main);
 
-        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        fragmentManager = getSupportFragmentManager();
+
+        if (savedInstanceState != null) { // “内存重启”时调用
+
+            //获取“内存重启”时保存的索引下标
+            currentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT,0);
+
+            //注意，添加顺序要跟下面添加的顺序一样！！！！
+            fragments.removeAll(fragments);
+            fragments.add(fragmentManager.findFragmentByTag(0+""));
+            fragments.add(fragmentManager.findFragmentByTag(1+""));
+
+            //恢复fragment页面
+            restoreFragment();
+
+
+        }else{      //正常启动时调用
+
+            fragments.add( AcgFragment.createAcgFragment());
+            fragments.add(CollectFragment.createAcgFragment());
         }
-        viewPager = findViewById(R.id.viewpager);
-        viewPager.setOffscreenPageLimit(3);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                item -> {
-                    switch (item.getItemId()) {
-                        case R.id.item_moeimg:
-                            viewPager.setCurrentItem(0);
-                            break;
-                        case R.id.item_cosplay:
-                            viewPager.setCurrentItem(1);
-                            break;
-                        case R.id.item_gamersky:
-                            viewPager.setCurrentItem(2);
-                            break;
-                    }
-                    return false;
-                });
+        slidingRootNav = new SlidingRootNavBuilder(this)
+                .withToolbarMenuToggle(toolbar)
+                .withMenuOpened(false)
+                .withContentClickableWhenMenuOpened(false)
+                .withContentClickableWhenMenuOpened(false)
+                .withSavedState(savedInstanceState)
+                .withMenuLayout(R.layout.menu_left_drawer)
+                .inject();
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        screenIcons = loadScreenIcons();
+        screenTitles = loadScreenTitles();
 
-            }
+        DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
+                createItemFor(POS_DASHBOARD).setChecked(true),
+                createItemFor(POS_ACCOUNT),
+                createItemFor(POS_MESSAGES),
+                createItemFor(POS_CART),
+                new SpaceItem(48),
+                createItemFor(POS_LOGOUT)));
+        adapter.setListener(this);
 
-            @Override
-            public void onPageSelected(int position) {
-                if (prevMenuItem != null) {
-                    prevMenuItem.setChecked(false);
-                } else {
-                    bottomNavigationView.getMenu().getItem(0).setChecked(false);
-                }
-                bottomNavigationView.getMenu().getItem(position).setChecked(true);
-                prevMenuItem = bottomNavigationView.getMenu().getItem(position);
-            }
+        RecyclerView list = findViewById(R.id.list);
+        list.setNestedScrollingEnabled(false);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(adapter);
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        // 如果想禁止滑动，可以把下面的代码取消注释
-//        viewPager.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return true;
-//            }
-//        });
-        setupViewPager(viewPager);
-    }
-
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(BaseFragment.newInstance("moeimg"));
-        adapter.addFragment(BaseFragment.newInstance("cosplay"));
-        adapter.addFragment(BaseFragment.newInstance("gamersky"));
-        viewPager.setAdapter(adapter);
+        adapter.setSelected(POS_DASHBOARD);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+    public void onItemSelected(int position) {
+        switch (position){
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_clear_cache:
-                clearCache();
+            case POS_LOGOUT:
+                finish();
+                break;
+            case POS_DASHBOARD:
+                currentIndex = 0;
+                break;
+            case POS_ACCOUNT:
+                currentIndex = 1;
                 break;
         }
-        return super.onOptionsItemSelected(item);
-    }
+        showFragment();
+//
+//        if (position == POS_LOGOUT) {
+//
+//        } else if (position == POS_DASHBOARD) {
+//            if (map.containsKey("acg")) {
+//                showFragment(map.get("acg"));
+//            } else {
+//                Log.d(TAG, "onItemSelected: " + "fragment被new了出来");
+//                slidingRootNav.closeMenu();
+//                acgFragment = AcgFragment.createAcgFragment();
+//                map.put("acg", acgFragment);
+//                showFragment(map.get("acg"));
+//            }
 
-
-    private void clearCache() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("提示");
-        builder.setMessage("确定清除缓存？");
-        builder.setCancelable(true);
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            final RxPermissions rxPermissions = new RxPermissions(this);
-            rxPermissions
-                    .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .subscribe(granted -> {
-                        if (granted) {
-                            FileUtil.deleteCache();
-                            if (GlideCatchUtil.getInstance().clearCacheDiskSelf())
-                                showToast("清除完成");
-                        } else {
-                            showToast("没有存储权限，没法进行下一步了");
-                        }
-                    });
-        });
-        builder.setNegativeButton("取消", null);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.BLACK);
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
-
-    }
-
-    public void coolect(View view) {
-        Intent intent = new Intent(this, CollectActivity.class);
-        startActivity(intent);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-    /** 根据百分比改变颜色透明度 */
-//    public int changeAlpha(int color, float fraction) {
-//        int red = Color.red(color);
-//        int green = Color.green(color);
-//        int blue = Color.blue(color);
-//        int alpha = (int) (Color.alpha(color) * fraction);
-//        return Color.argb(alpha, red, green, blue);
+//            if (map.containsKey("collect")) {
+//                showFragment(map.get("collect"));
+//
+//            } else {
+//                Log.d(TAG, "onItemSelected: " + "collectfragment被new了出来");
+//                slidingRootNav.closeMenu();
+//               collectFragment = CollectFragment.createAcgFragment();
+//                map.put("collect", collectFragment);
+//                showFragment(map.get("collect"));
+//            }
+//        }
+//
+   }
+//
+//    private void showFragment(android.support.v4.app.Fragment fragment) {
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, fragment)
+//                .commit();
+//
 //    }
+private void showFragment(){
+
+    FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+    //如果之前没有添加过
+    if(!fragments.get(currentIndex).isAdded()){
+        transaction
+                .hide(currentFragment)
+                .add(R.id.container,fragments.get(currentIndex),""+currentIndex);  //第三个参数为添加当前的fragment时绑定一个tag
+
+    }else{
+        transaction
+                .hide(currentFragment)
+                .show(fragments.get(currentIndex));
+    }
+
+    currentFragment = fragments.get(currentIndex);
+
+    transaction.commit();
+
+}
+    private void restoreFragment(){
+
+        FragmentTransaction mBeginTreansaction = fragmentManager.beginTransaction();
+        for (int i = 0; i < fragments.size(); i++) {
+
+            if(i == currentIndex){
+                mBeginTreansaction.show(fragments.get(i));
+            }else{
+                mBeginTreansaction.hide(fragments.get(i));
+            }
+
+        }
+
+        mBeginTreansaction.commit();
+
+        //把当前显示的fragment记录下来
+        currentFragment = fragments.get(currentIndex);
+
+    }
+    private DrawerItem createItemFor(int position) {
+        return new SimpleItem(screenIcons[position], screenTitles[position])
+                .withIconTint(color(R.color.textColorSecondary))
+                .withTextTint(color(R.color.textColorPrimary))
+                .withSelectedIconTint(color(R.color.bule))
+                .withSelectedTextTint(color(R.color.bule));
+    }
+
+    private String[] loadScreenTitles() {
+        return getResources().getStringArray(R.array.ld_activityScreenTitles);
+    }
+
+    private Drawable[] loadScreenIcons() {
+        TypedArray ta = getResources().obtainTypedArray(R.array.ld_activityScreenIcons);
+        Drawable[] icons = new Drawable[ta.length()];
+        for (int i = 0; i < ta.length(); i++) {
+            int id = ta.getResourceId(i, 0);
+            if (id != 0) {
+                icons[i] = ContextCompat.getDrawable(this, id);
+            }
+        }
+        ta.recycle();
+        return icons;
+    }
+
+    @ColorInt
+    private int color(@ColorRes int res) {
+        return ContextCompat.getColor(this, res);
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        //“内存重启”时保存当前的fragment名字
+        outState.putInt(CURRENT_FRAGMENT,currentIndex);
+        super.onSaveInstanceState(outState);
+    }
+
 
 }

@@ -7,10 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -20,7 +18,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +32,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wallpaper.anime.Application;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
@@ -43,7 +40,6 @@ import com.wallpaper.anime.db.Picture;
 import com.wallpaper.anime.fragment.Picture_Fragment;
 import com.wallpaper.anime.util.FileUtil;
 import com.wallpaper.anime.util.NetworkUtil;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -54,8 +50,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
 
 public class PictureActivity extends BaseActivity {
     private ViewPager mViewPager;
@@ -78,12 +72,12 @@ public class PictureActivity extends BaseActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         EventBus.getDefault().register(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+  //      toolbar = (Toolbar) findViewById(R.id.toolbar2);
+//        setSupportActionBar(toolbar);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
 
         collectflag = getIntent().getIntExtra("collect", 0);
         control_layuout = findViewById(R.id.control_layuout);
@@ -148,7 +142,6 @@ public class PictureActivity extends BaseActivity {
     }
 
     public void collect(View view) {
-
         requestPermission(imageUrl, 4);
     }
 

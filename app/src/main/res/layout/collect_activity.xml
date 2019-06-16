@@ -23,7 +23,7 @@
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".activity.MainActivity">
+        tools:context=".activity.AcgActivity">
 
 
         <android.support.design.widget.AppBarLayout

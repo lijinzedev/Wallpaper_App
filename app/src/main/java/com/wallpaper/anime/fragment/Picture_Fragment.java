@@ -56,6 +56,7 @@ public class Picture_Fragment extends Fragment {
                         .asBitmap()
                         .load(url)
                         .submit().get();
+                if (getActivity()!=null)
                getActivity().runOnUiThread(() -> {
 
                     touchImageView.setImageBitmap(bitmap);
