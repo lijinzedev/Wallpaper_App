@@ -164,7 +164,7 @@ public class CollectActivity extends BaseActivity {
     private class MyAdapter extends RecyclerView.Adapter {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.collect_card_item, parent, false);
             final MyViewHolder holder = new MyViewHolder(view);
             view.setOnClickListener((view1) -> {
                 holder.avatarImageView.setOnClickListener(new View.OnClickListener() {

@@ -14,7 +14,6 @@ public class SimpleEventBus {
     }
 
     public int getId() {
-
         return id;
     }
 

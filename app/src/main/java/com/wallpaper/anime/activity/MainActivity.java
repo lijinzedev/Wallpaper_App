@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.fragment.AcgFragment;
 import com.wallpaper.anime.fragment.CollectFragment;
+import com.wallpaper.anime.fragment.HistoryFragment;
 import com.wallpaper.anime.menu.DrawerAdapter;
 import com.wallpaper.anime.menu.DrawerItem;
 import com.wallpaper.anime.menu.SimpleItem;
@@ -47,8 +48,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private List<Fragment> fragments = new ArrayList<>();
     private static final String CURRENT_FRAGMENT = "STATE_FRAGMENT_SHOW";
     private int currentIndex = 0;
-    private AcgFragment acgFragment;
-    private CollectFragment collectFragment;
+
 
     private static final String TAG = "MainActivity";
 
@@ -60,25 +60,25 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentManager = getSupportFragmentManager();
-
+       // LitePal.deleteAll(PictureHistory.class);
         if (savedInstanceState != null) { // “内存重启”时调用
-
             //获取“内存重启”时保存的索引下标
-            currentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT,0);
-
+            currentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT, 0);
             //注意，添加顺序要跟下面添加的顺序一样！！！！
             fragments.removeAll(fragments);
-            fragments.add(fragmentManager.findFragmentByTag(0+""));
-            fragments.add(fragmentManager.findFragmentByTag(1+""));
+            fragments.add(fragmentManager.findFragmentByTag(0 + ""));
+            fragments.add(fragmentManager.findFragmentByTag(1 + ""));
+            fragments.add(fragmentManager.findFragmentByTag(2 + ""));
 
             //恢复fragment页面
             restoreFragment();
 
 
-        }else{      //正常启动时调用
+        } else {      //正常启动时调用
 
-            fragments.add( AcgFragment.createAcgFragment());
+            fragments.add(AcgFragment.createAcgFragment());
             fragments.add(CollectFragment.createAcgFragment());
+            fragments.add(new HistoryFragment());
         }
         slidingRootNav = new SlidingRootNavBuilder(this)
                 .withToolbarMenuToggle(toolbar)
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 
     @Override
     public void onItemSelected(int position) {
-        switch (position){
+        switch (position) {
 
             case POS_LOGOUT:
                 finish();
@@ -121,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 break;
             case POS_ACCOUNT:
                 currentIndex = 1;
+                break;
+            case POS_MESSAGES:
+                currentIndex = 2;
                 break;
         }
         showFragment();
@@ -150,54 +153,48 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
 //            }
 //        }
 //
-   }
-//
+    }
+
+    //
 //    private void showFragment(android.support.v4.app.Fragment fragment) {
 //        fragmentManager.beginTransaction()
 //                .replace(R.id.container, fragment)
 //                .commit();
 //
 //    }
-private void showFragment(){
+    private void showFragment() {
 
-    FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-    //如果之前没有添加过
-    if(!fragments.get(currentIndex).isAdded()){
-        transaction
-                .hide(currentFragment)
-                .add(R.id.container,fragments.get(currentIndex),""+currentIndex);  //第三个参数为添加当前的fragment时绑定一个tag
+        //如果之前没有添加过
+        if (!fragments.get(currentIndex).isAdded()) {
+            transaction
+                    .hide(currentFragment)
+                    .add(R.id.container, fragments.get(currentIndex), "" + currentIndex);  //第三个参数为添加当前的fragment时绑定一个tag
 
-    }else{
-        transaction
-                .hide(currentFragment)
-                .show(fragments.get(currentIndex));
+        } else {
+            transaction
+                    .hide(currentFragment)
+                    .show(fragments.get(currentIndex));
+        }
+        currentFragment = fragments.get(currentIndex);
+        transaction.commit();
     }
 
-    currentFragment = fragments.get(currentIndex);
-
-    transaction.commit();
-
-}
-    private void restoreFragment(){
-
+    private void restoreFragment() {
         FragmentTransaction mBeginTreansaction = fragmentManager.beginTransaction();
         for (int i = 0; i < fragments.size(); i++) {
-
-            if(i == currentIndex){
+            if (i == currentIndex) {
                 mBeginTreansaction.show(fragments.get(i));
-            }else{
+            } else {
                 mBeginTreansaction.hide(fragments.get(i));
             }
-
         }
-
         mBeginTreansaction.commit();
-
         //把当前显示的fragment记录下来
         currentFragment = fragments.get(currentIndex);
-
     }
+
     private DrawerItem createItemFor(int position) {
         return new SimpleItem(screenIcons[position], screenTitles[position])
                 .withIconTint(color(R.color.textColorSecondary))
@@ -227,11 +224,11 @@ private void showFragment(){
     private int color(@ColorRes int res) {
         return ContextCompat.getColor(this, res);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-
         //“内存重启”时保存当前的fragment名字
-        outState.putInt(CURRENT_FRAGMENT,currentIndex);
+        outState.putInt(CURRENT_FRAGMENT, currentIndex);
         super.onSaveInstanceState(outState);
     }
 

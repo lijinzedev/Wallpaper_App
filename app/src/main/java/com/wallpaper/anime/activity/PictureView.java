@@ -3,7 +3,6 @@ package com.wallpaper.anime.activity;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,19 +11,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,85 +26,66 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.ortiz.touchview.TouchImageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wallpaper.anime.Application;
-import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.db.Picture;
-import com.wallpaper.anime.fragment.Picture_Fragment;
+import com.wallpaper.anime.glide.GlideApp;
 import com.wallpaper.anime.util.FileUtil;
 import com.wallpaper.anime.util.NetworkUtil;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class PictureActivity extends BaseActivity {
-    private ViewPager mViewPager;
+public class PictureView extends BaseActivity {
+
     private static final String TAG = "PictureActivity";
     private String imageUrl;
     private LinearLayout control_layuout;
     FloatingActionButton fab;
     private Picture picture;
     private int collectflag; //收藏标签
-    private static final String URL = "URL";
-    private static final String LIST = "LIST";
-    List<String> mlist = new ArrayList<>();
-    Toolbar toolbar;
-    int postion;
+    private TouchImageView touchImageView;
+    private ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTranslucent();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_picture);
-        EventBus.getDefault().register(this);
-  //      toolbar = (Toolbar) findViewById(R.id.toolbar2);
-//        setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
+        setContentView(R.layout.activity_pictureview);
         collectflag = getIntent().getIntExtra("collect", 0);
+        imageUrl = getIntent().getStringExtra("IMGURL");
         control_layuout = findViewById(R.id.control_layuout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        /**
+         * 缓冲动画
+         */
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 collect(view);
             }
         });
-
-
-
-        mViewPager = findViewById(R.id.vp_picture);
-        intiData();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
-            @Override
-            public Fragment getItem(int position) {
-//                if (position == 0) {
-//                    EventBus.getDefault().post(
-//                            new SimpleEventBus(1, "update"));
-//                }
-                String url = mlist.get(position);
-
-                return Picture_Fragment.getInstance(url);
+        touchImageView = findViewById(R.id.iv_full);
+        new Thread(() -> {
+            try {
+                Bitmap bitmap = GlideApp.with(this)
+                        .asBitmap()
+                        .load(imageUrl)
+                        .submit().get();
+                runOnUiThread(() -> {
+                    touchImageView.setImageBitmap(bitmap);
+                });
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            public int getCount() {
-                return mlist.size();
-            }
-        });
+        }).start();
         if (control_layuout.getVisibility() == View.VISIBLE) {
 
             control_layuout.setVisibility(View.GONE);
@@ -119,38 +94,53 @@ public class PictureActivity extends BaseActivity {
             control_layuout.setVisibility(View.VISIBLE);
             fab.show();
         }
-
-        //Record last browse location
-//        for(int i=0;i<mlist.size();i++){
-//            if(mlist.get(i).equals(imageUrl)){
-//                mViewPager.setCurrentItem(i);
-//                break;
-//            }
-//        }
-        mViewPager.setCurrentItem(postion);
     }
 
 
     public void download(View view) {
         if (NetworkUtil.isNetworkAvailable(this))
             requestPermission(imageUrl, 1);
-        else Toast.makeText(PictureActivity.this, "网络不可用", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
     public void setWallpaper(View view) {
         if (NetworkUtil.isNetworkAvailable(this))
             requestPermission(imageUrl, 2);
-        else Toast.makeText(PictureActivity.this, "网络不可用", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
     public void collect(View view) {
+
         requestPermission(imageUrl, 4);
     }
 
     public void share(View view) {
         if (NetworkUtil.isNetworkAvailable(this))
             requestPermission(imageUrl, 3);
-        else Toast.makeText(PictureActivity.this, "网络不可用", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(this, "网络不可用", Toast.LENGTH_SHORT).show();
+        /** * 分享图片 */
+//        new Thread(() -> {
+//            try {
+//                File file = GlideApp.with(PictureActivity.this)
+//                        .asFile()
+//                        .load(imageUrl)
+//                        .submit().get();
+//                runOnUiThread(() -> {
+//                    Intent share_intent = new Intent();
+//                    share_intent.setAction(Intent.ACTION_SEND);//设置分享行为
+//                    share_intent.setType("image/*");  //设置分享内容的类型
+//                    share_intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+//                    //创建分享的Dialog
+//                    share_intent = Intent.createChooser(share_intent, "分享到");
+//                    startActivity(share_intent);
+//                });
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//        }
     }
 
     private void requestPermission(String url, int flag) {
@@ -161,7 +151,7 @@ public class PictureActivity extends BaseActivity {
                     if (granted) {
                         baseTask(url, flag);
                     } else {
-                        Toast.makeText(PictureActivity.this, "没有存储权限，没法进行下一步了", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "没有存储权限，没法进行下一步了", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -172,6 +162,8 @@ public class PictureActivity extends BaseActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             mWallManager.setBitmap(bitmap);
             Toast.makeText(this, "主题壁纸设置成功，赶快去体验一下吧！", Toast.LENGTH_SHORT).show();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -187,7 +179,7 @@ public class PictureActivity extends BaseActivity {
                 File destFile = null;
                 try {
                     FutureTarget<File> future = Glide
-                            .with(PictureActivity.this)
+                            .with(PictureView.this)
                             .load(url)
                             .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
 
@@ -224,8 +216,11 @@ public class PictureActivity extends BaseActivity {
                     // 通知图库更新
                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                             Uri.fromFile(new File(destFile.getPath()))));
-                    Toast.makeText(PictureActivity.this, "已保存", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PictureView.this, "已保存", Toast.LENGTH_SHORT).show();
                 } else if (flag == 2) {
+//                    SetWallpaper.setWallpaper(PictureActivity.this, // 上下文
+//                            destFile.getAbsolutePath(), // 图片绝对路径
+//                            APP_AUTHORITY);// authority（7.0 文件共享权限）
                     MySetWallPaper(destFile.getAbsolutePath());
 
                 } else if (flag == 3) {
@@ -238,8 +233,11 @@ public class PictureActivity extends BaseActivity {
                     share_intent = Intent.createChooser(share_intent, "分享到");
                     startActivity(share_intent);
                 } else if (flag == 4) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PictureActivity.this, R.style.DialogIOS);
-                    View view = LayoutInflater.from(PictureActivity.this).inflate(R.layout.dialog_choosepage, null);
+//                    picture = new Picture();
+//                    picture.setUrl(imageUrl);
+//                    picture.save();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PictureView.this, R.style.DialogIOS);
+                    View view = LayoutInflater.from(PictureView.this).inflate(R.layout.dialog_choosepage, null);
                     TextView cancel = view.findViewById(R.id.choosepage_cancel);
                     TextView sure = view.findViewById(R.id.choosepage_sure);
                     final EditText tag = view.findViewById(R.id.tag);
@@ -252,7 +250,7 @@ public class PictureActivity extends BaseActivity {
                     cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(PictureActivity.this, "取消收藏", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PictureView.this, "取消收藏", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     });
@@ -264,6 +262,12 @@ public class PictureActivity extends BaseActivity {
 
                             picture = new Picture();
                             picture.setUrl(imageUrl);
+//                            if ("".equals(thelable)) {
+//                                Toast.makeText(PictureActivity.this, "亲，请输入标题哦", Toast.LENGTH_SHORT).show();
+//                            } else {
+//
+//                                picture.setLabel(thelable);
+//                            }
                             if ("".equals(thetag)) {
                                 picture.setTag("love");
                             } else {
@@ -271,13 +275,15 @@ public class PictureActivity extends BaseActivity {
                                 picture.setTag(thetag);
                             }
                             picture.save();
-                            Toast.makeText(PictureActivity.this, "已收藏", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PictureView.this, "已收藏", Toast.LENGTH_SHORT).show();
 
                             dialog.dismiss();
                         }
                     });
                 }
 
+                //  List <Picture> pictures = LitePal.findAll(Picture.class);
+                //   Log.d(TAG, "onPostExecute: "+pictures.size());
             }
 
 
@@ -320,7 +326,7 @@ public class PictureActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+
     }
 
     @Override
@@ -332,32 +338,5 @@ public class PictureActivity extends BaseActivity {
 //        }else
         finish();
         overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
-    }
-
-    private void intiData() {
-        //   get  the  value  of  the  intent  tag
-        postion=getIntent().getIntExtra("postion",0);
-        imageUrl = getIntent().getStringExtra(URL);
-        mlist = (List<String>) getIntent().getSerializableExtra(LIST);
-
-    }
-
-    //config intent
-    public static Intent newIntent(Context context, String url, List<String> fruitList,int postion) {
-        Intent intent = new Intent(context, PictureActivity.class);
-        intent.putExtra(URL, url);
-        intent.putExtra(LIST, (Serializable) fruitList);
-        intent.putExtra("postion",postion);
-        return intent;
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(SimpleEventBus event) {
-        if (event.getId() == 2) {
-            Log.w(TAG, "onEventMainThread: "+"PictureActivity接收总线" );
-            Snackbar.make(toolbar, R.string.re_success, Snackbar.LENGTH_SHORT).show();
-            intiData();
-            mViewPager.getAdapter().notifyDataSetChanged();
-        }
     }
 }

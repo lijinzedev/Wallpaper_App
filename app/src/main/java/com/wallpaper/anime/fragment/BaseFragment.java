@@ -1,6 +1,5 @@
 package com.wallpaper.anime.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,7 +35,6 @@ import com.wallpaper.anime.minterface.AcgApi;
 import com.wallpaper.anime.util.Constant;
 import com.wallpaper.anime.util.NetworkUtil;
 import com.wallpaper.anime.util.SSLSocketClient;
-import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -257,7 +255,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Override
     public void onItemClick(String url, int position) {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
-            startActivity( PictureActivity.newIntent(Application.getInstance(),url_string_list.get(position),url_string_list));
+            startActivity( PictureActivity.newIntent(Application.getInstance(),url_string_list.get(position),url_string_list,position));
             getActivity().overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
     }

@@ -2,7 +2,6 @@ package com.wallpaper.anime.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wallpaper.anime.R;
-import com.wallpaper.anime.activity.CollectActivity;
 import com.wallpaper.anime.adapter.ViewPagerAdapter;
 import com.wallpaper.anime.glide.GlideCatchUtil;
 import com.wallpaper.anime.util.FileUtil;
@@ -168,11 +166,6 @@ public class AcgFragment extends android.support.v4.app.Fragment {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);//恢复状态栏白色字体
             }
         }
-    }
-    public void coolect(View view) {
-        Intent intent = new Intent(getActivity(), CollectActivity.class);
-        startActivity(intent);
-
     }
 
     @Override

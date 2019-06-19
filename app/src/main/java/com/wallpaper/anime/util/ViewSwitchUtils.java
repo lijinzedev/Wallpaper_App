@@ -37,6 +37,6 @@ public class ViewSwitchUtils {
             oldTransitionDrawable.setDrawableByLayerId(oldTransitionDrawable.getId(0), oldBitmapDrawable);
             oldTransitionDrawable.setDrawableByLayerId(oldTransitionDrawable.getId(1), new BitmapDrawable(bitmap));
         }
-        oldTransitionDrawable.startTransition(100);
+        oldTransitionDrawable.startTransition(1000);
     }
 }

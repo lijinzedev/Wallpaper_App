@@ -1,4 +1,4 @@
-0<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wallpaper.anime">
 
@@ -55,6 +55,7 @@
             android:label="我的收藏"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.MainActivity" ></activity>
+        <activity android:name=".activity.PictureView" ></activity>
     </application>
 
 </manifest>
