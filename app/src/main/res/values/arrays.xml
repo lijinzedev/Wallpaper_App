@@ -6,6 +6,7 @@
         <item>我的收藏</item>
         <item>我的足迹</item>
         <item>Cart</item>
+        <item>3d</item>
         <item />
         <item>溜了溜了</item>
     </string-array>
@@ -15,6 +16,7 @@
         <item>@drawable/ic_account_outline_grey600_24dp</item>
         <item>@drawable/ic_email_outline_grey600_24dp</item>
         <item>@drawable/ic_cart_outline_grey600_24dp</item>
+        <item>@drawable/ic_account_3d_grey600_24dp</item>
         <item>0</item>
         <item>@drawable/ic_logout_grey600_24dp</item>
     </array>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="AcgClub"></dbname>
-    <version value="3"></version>
+    <version value="8"></version>
     <list>
         <mapping class="com.wallpaper.anime.db.Picture"></mapping>
         <mapping class="com.wallpaper.anime.db.PictureHistory"></mapping>
+        <mapping class="com.wallpaper.anime.db.SimpleTitleTip"></mapping>
     </list>
 </litepal>

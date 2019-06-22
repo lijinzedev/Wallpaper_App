@@ -14,10 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import com.wallpaper.anime.R;
+import com.wallpaper.anime.db.SimpleTitleTip;
 import com.wallpaper.anime.fragment.AcgFragment;
+import com.wallpaper.anime.fragment.CdnFragment;
 import com.wallpaper.anime.fragment.CollectFragment;
+import com.wallpaper.anime.fragment.Fragment_for3d;
 import com.wallpaper.anime.fragment.HistoryFragment;
 import com.wallpaper.anime.menu.DrawerAdapter;
 import com.wallpaper.anime.menu.DrawerItem;
@@ -25,6 +30,8 @@ import com.wallpaper.anime.menu.SimpleItem;
 import com.wallpaper.anime.menu.SpaceItem;
 import com.wallpaper.slidingrootnav.SlidingRootNav;
 import com.wallpaper.slidingrootnav.SlidingRootNavBuilder;
+
+import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private static final int POS_ACCOUNT = 1;
     private static final int POS_MESSAGES = 2;
     private static final int POS_CART = 3;
+    private static final int POS_3D = 4;
     private static final int POS_LOGOUT = 5;
     private String[] screenTitles;
     private Drawable[] screenIcons;
@@ -48,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private List<Fragment> fragments = new ArrayList<>();
     private static final String CURRENT_FRAGMENT = "STATE_FRAGMENT_SHOW";
     private int currentIndex = 0;
-
+    private TextView tv;
 
     private static final String TAG = "MainActivity";
 
@@ -56,56 +64,57 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        tv = findViewById(R.id.dingyue);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentManager = getSupportFragmentManager();
-       // LitePal.deleteAll(PictureHistory.class);
+        // LitePal.deleteAll(PictureHistory.class);
+        List<SimpleTitleTip> simpleTitleTips = LitePal.findAll(SimpleTitleTip.class);
+
         if (savedInstanceState != null) { // “内存重启”时调用
             //获取“内存重启”时保存的索引下标
             currentIndex = savedInstanceState.getInt(CURRENT_FRAGMENT, 0);
             //注意，添加顺序要跟下面添加的顺序一样！！！！
+
             fragments.removeAll(fragments);
             fragments.add(fragmentManager.findFragmentByTag(0 + ""));
             fragments.add(fragmentManager.findFragmentByTag(1 + ""));
             fragments.add(fragmentManager.findFragmentByTag(2 + ""));
+            fragments.add(fragmentManager.findFragmentByTag(3 + ""));
+            fragments.add(fragmentManager.findFragmentByTag(4 + ""));
 
             //恢复fragment页面
             restoreFragment();
-
-
-        } else {      //正常启动时调用
-
+        } else {
+            //正常启动时调用
             fragments.add(AcgFragment.createAcgFragment());
             fragments.add(CollectFragment.createAcgFragment());
             fragments.add(new HistoryFragment());
+            fragments.add(new CdnFragment());
+            fragments.add(new Fragment_for3d());
         }
         slidingRootNav = new SlidingRootNavBuilder(this)
                 .withToolbarMenuToggle(toolbar)
                 .withMenuOpened(false)
                 .withContentClickableWhenMenuOpened(false)
-                .withContentClickableWhenMenuOpened(false)
                 .withSavedState(savedInstanceState)
                 .withMenuLayout(R.layout.menu_left_drawer)
                 .inject();
-
         screenIcons = loadScreenIcons();
         screenTitles = loadScreenTitles();
-
         DrawerAdapter adapter = new DrawerAdapter(Arrays.asList(
                 createItemFor(POS_DASHBOARD).setChecked(true),
                 createItemFor(POS_ACCOUNT),
                 createItemFor(POS_MESSAGES),
                 createItemFor(POS_CART),
+                createItemFor(POS_3D),
                 new SpaceItem(48),
                 createItemFor(POS_LOGOUT)));
         adapter.setListener(this);
-
         RecyclerView list = findViewById(R.id.list);
         list.setNestedScrollingEnabled(false);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
-
         adapter.setSelected(POS_DASHBOARD);
     }
 
@@ -118,12 +127,25 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 break;
             case POS_DASHBOARD:
                 currentIndex = 0;
+                tv.setVisibility(View.GONE);
                 break;
             case POS_ACCOUNT:
                 currentIndex = 1;
+                tv.setVisibility(View.GONE);
                 break;
             case POS_MESSAGES:
                 currentIndex = 2;
+                tv.setVisibility(View.GONE);
+                break;
+            case POS_CART:
+                currentIndex = 3;
+                tv.setVisibility(View.VISIBLE);
+                break;
+            case POS_3D:
+                currentIndex = 4;
+                tv.setVisibility(View.GONE);
+                break;
+            default:
                 break;
         }
         showFragment();

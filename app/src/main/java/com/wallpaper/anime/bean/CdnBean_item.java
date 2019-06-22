@@ -2,6 +2,11 @@ package com.wallpaper.anime.bean;
 
 import java.util.List;
 
+/**
+ *
+ * 360 分类实体类
+ *
+ */
 public class CdnBean_item {
 
     /**

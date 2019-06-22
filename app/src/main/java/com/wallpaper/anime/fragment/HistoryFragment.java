@@ -121,7 +121,7 @@ public class HistoryFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(SimpleEventBus event) {
         if (event.getId() == 3) {
-            Log.d(TAG, "onEventMainThread:" + "接受到消息"+event.getString());
+            Log.d(TAG, "onEventMainThread:" + "接受到消息" + event.getString());
             setDataListItems(event.getString());
 //            mTimeLineAdapter.notifyItemInserted(0);
 //            mRecyclerView.getLayoutManager().scrollToPosition(0);
@@ -129,9 +129,16 @@ public class HistoryFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+
         super.onDestroy();
 
     }

@@ -32,4 +32,15 @@
         <item name="layout">@layout/dialog_choosepage</item>
         <item name="android:windowBackground">@drawable/view_sharp</item>
     </style>
+    <style name="RoundButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:enabled">true</item>
+        <item name="android:textColor">#ccffffff</item>
+    </style>
 </resources>
