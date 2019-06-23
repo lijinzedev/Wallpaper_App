@@ -28,10 +28,11 @@ import static org.litepal.LitePalApplication.getContext;
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     private List<String> mList = new ArrayList<>();
     private CardAdapterHelper mCardAdapterHelper = new CardAdapterHelper();
-        private Activity activity;
-    public CardAdapter(List<String> mList,Activity activity) {
+    private Activity activity;
+
+    public CardAdapter(List<String> mList, Activity activity) {
         this.mList = mList;
-        this.activity=activity;
+        this.activity = activity;
     }
 
     @Override
@@ -51,8 +52,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 if (NetworkUtil.isNetworkAvailable(getContext())) {
-                        activity.startActivity(PictureActivity.newIntent(activity,mList.get(position),mList,position));
-
+                    activity.startActivity(PictureActivity.newIntent(activity, mList.get(position), mList, position));
                 } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
             }
         });

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.wallpaper.anime.Application;
+import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
 import com.wallpaper.anime.adapter.CardAdapter;
@@ -28,13 +29,16 @@ import com.wallpaper.anime.util.BlurBitmapUtils;
 import com.wallpaper.anime.util.NetworkUtil;
 import com.wallpaper.anime.util.ViewSwitchUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class CollectFragment extends Fragment  {
+public class CollectFragment extends Fragment {
     private static final String TAG = "CollectFragment";
     private List<Picture> list = new ArrayList<>();
     private List<Picture> bufferlist = new ArrayList<>();
@@ -46,10 +50,16 @@ public class CollectFragment extends Fragment  {
     private List<String> url_string_list = new ArrayList<>();
     private CardScaleHelper mCardScaleHelper = null;
     private int mLastPos = -1;
+    CardAdapter adapter;
 
     public static CollectFragment createAcgFragment() {
         CollectFragment fragment = new CollectFragment();
         return fragment;
+    }
+
+    public CollectFragment() {
+        EventBus.getDefault().register(this);
+        adapter = new CardAdapter(url_string_list, getActivity());
     }
 
     @Nullable
@@ -157,7 +167,8 @@ public class CollectFragment extends Fragment  {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(new CardAdapter(url_string_list,getActivity()));
+
+        recyclerView.setAdapter(adapter);
         // mRecyclerView绑定scale效果
         mCardScaleHelper = new CardScaleHelper();
         mCardScaleHelper.setCurrentItemPos(0);
@@ -176,8 +187,30 @@ public class CollectFragment extends Fragment  {
                 }
             }
         });
+        if (list.size() != 0) {
+            notifyBackgroundChange();
+        }
+    }
 
-        notifyBackgroundChange();
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(SimpleEventBus event) {
+        if (event.getId() == 4) {
+            list.clear();
+            list = LitePal.order("id desc").limit(5).find(Picture.class);
+            if (list.size() != 0) {
+                for (Picture picture : list) {
+                    bufferlist.add(picture);
+                    url_string_list.add(picture.getUrl());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     private void notifyBackgroundChange() {
@@ -188,8 +221,6 @@ public class CollectFragment extends Fragment  {
         mBlurRunnable = new Runnable() {
             @Override
             public void run() {
-
-
                 new Thread(() -> {
                     try {
                         Bitmap bitmap = GlideApp.with(getActivity())
@@ -221,8 +252,6 @@ public class CollectFragment extends Fragment  {
             }
         }
     }
-
-
 
 
     private class MyAdapter extends RecyclerView.Adapter {

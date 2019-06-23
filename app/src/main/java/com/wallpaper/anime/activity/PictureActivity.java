@@ -272,7 +272,8 @@ public class PictureActivity extends BaseActivity {
                             }
                             picture.save();
                             Toast.makeText(PictureActivity.this, "已收藏", Toast.LENGTH_SHORT).show();
-
+                            EventBus.getDefault().post(
+                                    new SimpleEventBus(4, ""));
                             dialog.dismiss();
                         }
                     });

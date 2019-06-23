@@ -11,6 +11,6 @@
         app:autoScrollMode="uniform"
         app:darkColor="@color/tagDark"
         app:lightColor="@color/tagLight"
-        app:radiusPercent="0.6"
+        app:radiusPercent="0.8"
         app:scrollSpeed="3" />
 </LinearLayout>

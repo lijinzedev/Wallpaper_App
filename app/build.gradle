@@ -69,6 +69,7 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46' //强大的recyclerview
     implementation 'com.github.devlight:infinitecycleviewpager:1.0.2'
     implementation 'com.moxun:tagcloudlib:1.2.0' //3d滚动效果库
+    implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
 }
 repositories {
     mavenCentral()

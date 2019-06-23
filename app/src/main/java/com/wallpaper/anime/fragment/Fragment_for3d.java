@@ -1,16 +1,13 @@
 package com.wallpaper.anime.fragment;
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.moxun.tagcloudlib.view.TagCloudView;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.adapter.ViewTagsAdapter;
-
 public class Fragment_for3d extends android.support.v4.app.Fragment {
 
     private TagCloudView tagCloudView;

@@ -30,6 +30,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths_public" />
         </provider>
+
         <activity android:name=".activity.LoadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +53,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PictureView" />
-
+        <activity android:name=".activity.CdnActivity"></activity>
     </application>
 
 </manifest>

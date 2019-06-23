@@ -16,7 +16,8 @@ public class TipDataModel {
             new SimpleTitleTip(36, "4K专区"),
             new SimpleTitleTip(6, "美女模特"),
             new SimpleTitleTip(30, "爱情美图"),
-            new SimpleTitleTip(9, "风景大片")};
+            new SimpleTitleTip(9, "风景大片")
+    };
     private static SimpleTitleTip[] addTips = {
             new SimpleTitleTip(15, "小清新"),
             new SimpleTitleTip(26, "动漫卡通"),
