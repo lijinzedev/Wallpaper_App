@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private static final int POS_CART = 3;
     private static final int POS_3D = 4;
     private static final int POS_LOGOUT = 5;
+    private static final int Live_2d = 6;
     private String[] screenTitles;
     private Drawable[] screenIcons;
     private SlidingRootNav slidingRootNav;

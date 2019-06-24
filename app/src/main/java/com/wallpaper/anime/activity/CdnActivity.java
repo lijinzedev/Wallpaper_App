@@ -2,10 +2,12 @@ package com.wallpaper.anime.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.github.jdsjlzx.interfaces.OnLoadMoreListener;
 import com.github.jdsjlzx.interfaces.OnNetWorkErrorListener;
 import com.github.jdsjlzx.interfaces.OnRefreshListener;
@@ -43,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static org.litepal.LitePalApplication.getContext;
 
-public class CdnActivity extends AppCompatActivity {
+public class CdnActivity extends BaseActivity {
 
     private static String baseurl = "http://wallpaper.apc.360.cn/";
     /**
@@ -69,12 +72,18 @@ public class CdnActivity extends AppCompatActivity {
     int id;
     private static final String TAG = "CdnActivity";
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
         setContentView(R.layout.activity_cdn);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        init_toolbar();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRecyclerView = (LRecyclerView) findViewById(R.id.list);
         mDataAdapter = new DataAdapter(this);
@@ -109,7 +118,22 @@ public class CdnActivity extends AppCompatActivity {
             }
         });
         mRecyclerView.refresh();
+    }
 
+    private void init_toolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        String title = getIntent().getStringExtra("title");
+        toolbar.setTitle(title);
+        toolbar.getBackground().setAlpha(200);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void addItems(List<CdnPicture_Bean> list) {
@@ -214,6 +238,7 @@ public class CdnActivity extends AppCompatActivity {
     private class DataAdapter extends ListBaseAdapter<CdnPicture_Bean> {
 
         List<String> list = new ArrayList<>();
+
         public void changeData() {
             for (CdnPicture_Bean cdnPictureBean : mDataList) {
                 list.add(cdnPictureBean.url);
@@ -242,23 +267,28 @@ public class CdnActivity extends AppCompatActivity {
                     Intent intent = new Intent(getContext(), PictureActivity.class);
                     intent.putExtra("URL", list.get(position));
                     intent.putExtra("LIST", (Serializable) list);
-                    intent.putExtra("postion",position);
+                    intent.putExtra("postion", position);
                     startActivity(intent);
 //                    Toast.makeText(mContext, "点击"+position, Toast.LENGTH_SHORT).show();
                 }
             });
             CdnPicture_Bean cdnPicture_bean = mDataList.get(position);
-            GlideApp.with(CdnActivity.this).load(cdnPicture_bean.url).into(imageView);
-            cardView.getLayoutParams().height = cdnPicture_bean.Height;
+            GlideApp.with(CdnActivity.this).
+                    asDrawable().placeholder(R.drawable.bg_black).
+                    transition(DrawableTransitionOptions.withCrossFade()). //淡入淡出动画
+                    load(cdnPicture_bean.url).centerCrop().into(imageView);
+            //cardView.getLayoutParams().height = cdnPicture_bean.Height;
 
         }
 
     }
 
+
     //config intent
-    public static Intent getIntent(Context context, int id) {
+    public static Intent getIntent(Context context, int id, String title) {
         Intent intent = new Intent(context, CdnActivity.class);
         intent.putExtra("id", id);
+        intent.putExtra("title", title);
         return intent;
     }
 }

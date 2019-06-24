@@ -1,7 +1,6 @@
 package com.wallpaper.anime.adapter;
+
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.glide.GlideApp;
 import com.wallpaper.anime.util.ResMsg;
@@ -67,6 +68,8 @@ public class BasePictureAdapter extends RecyclerView.Adapter<BasePictureAdapter.
             GlideApp.with(mContext)
                     .asBitmap()
                     .load(imageUrl)
+                    .placeholder(R.drawable.bg_white).
+                     transition(BitmapTransitionOptions.withCrossFade()) //淡入淡出动画
                     .into(holder.parallaxImageView);
         } else {
 

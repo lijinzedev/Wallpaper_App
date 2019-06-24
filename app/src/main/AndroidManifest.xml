@@ -53,7 +53,18 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PictureView" />
-        <activity android:name=".activity.CdnActivity"></activity>
+        <activity android:name=".activity.CdnActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <service
+            android:name="jp.live2d.asuna_26.LiveWallpaperService"
+            android:permission="android.permission.BIND_WALLPAPER" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" />
+        </service>
     </application>
 
 </manifest>

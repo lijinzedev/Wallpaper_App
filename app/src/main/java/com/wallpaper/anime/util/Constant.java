@@ -14,7 +14,7 @@ public class Constant {
         int MOEIMG = 213;
         int COSPLAY = 129;
         int GAMERSKY = 60;
-        int CDN = 70;
+        int CDN = 60;
         int START=5;
         switch (type) {
             case "moeimg":

@@ -70,7 +70,7 @@ public class ViewTagsAdapter extends TagsAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(CdnActivity.getIntent(context, tips[position].getId()));
+                context.startActivity(CdnActivity.getIntent(context, tips[position].getId(),tips[position].getTip()));
             }
         });
         switch (position) {
