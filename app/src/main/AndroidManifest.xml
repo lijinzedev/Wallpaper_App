@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.wallpaper.anime">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
+
     <application
-        android:name=".Application"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_logo"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_logo"
         android:supportsRtl="true"
-        android:theme="@style/MainTheme">
+        android:theme="@style/MainTheme"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:theme">
         <meta-data
             android:name="com.wallpaper.anime.glide.GlideConfiguration"
             android:value="GlideModule" />
@@ -31,13 +37,13 @@
                 android:resource="@xml/file_paths_public" />
         </provider>
 
-        <activity android:name=".activity.LoadActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <!--<activity android:name=".activity.LoadActivity">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!--<category android:name="android.intent.category.LAUNCHER" />-->
+        <!--</intent-filter>-->
+        <!--</activity>-->
         <activity
             android:name=".activity.PictureActivity"
             android:label="@string/title_activity_picture"
@@ -53,11 +59,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PictureView" />
-        <activity android:name=".activity.CdnActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activity.CdnActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <service
             android:name="jp.live2d.asuna_26.LiveWallpaperService"
-            android:permission="android.permission.BIND_WALLPAPER" >
+            android:permission="android.permission.BIND_WALLPAPER">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
@@ -65,6 +73,92 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/wallpaper" />
         </service>
+
+        <activity android:name="com.wallpaper.moive.ui.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.Dy_MainActivity"
+            android:theme="@style/QMuiAppTheme">
+
+
+        </activity>
+        <activity
+            android:name="com.wallpaper.moive.ui.SettingActivity"
+            android:theme="@style/QMuiAppTheme" />
+        <activity android:name="com.wallpaper.moive.ui.HelpActivity" />
+        <activity android:name="com.wallpaper.moive.ui.AboutActivity" />
+        <activity android:name="com.wallpaper.moive.ui.MemorialActivity" />
+        <activity
+            android:name="com.wallpaper.moive.ui.DownloadActivity"
+            android:launchMode="singleTask" />
+
+        <activity-alias
+            android:name=".ShareActivity"
+            android:label="动态壁纸"
+            android:targetActivity="com.wallpaper.moive.ui.DownloadActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.SEND" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 配置实时壁纸Service -->
+        <service
+            android:name="com.wallpaper.moive.service.VideoLiveWallpaper"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:process=":wallpaper">
+
+            <!-- 为实时壁纸配置intent-filter -->
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <!-- 为实时壁纸配置meta-data -->
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/livewallpaper" />
+        </service>
+        <!-- 配置实时壁纸Service -->
+        <service
+            android:name="com.wallpaper.moive.service.VideoLiveWallpaper2"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:process=":wallpaper">
+
+            <!-- 为实时壁纸配置intent-filter -->
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <!-- 为实时壁纸配置meta-data -->
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/livewallpaper" />
+        </service>
+
+        <receiver android:name="com.wallpaper.moive.service.Memorial">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name="com.wallpaper.moive.service.DownloadService"
+            android:enabled="true"
+            android:exported="true" />
+
+
     </application>
 
 </manifest>

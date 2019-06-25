@@ -11,14 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.adapter.ViewPagerAdapter;
 import com.wallpaper.anime.fragment.BaseFragment;
 import com.wallpaper.anime.glide.GlideCatchUtil;
 import com.wallpaper.anime.util.FileUtil;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 
 public class AcgActivity extends BaseActivity {
+
     private static final String TAG = "LoadActivity";
     private BottomNavigationView bottomNavigationView;
 
@@ -28,7 +29,6 @@ public class AcgActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setTranslucent();
-
         setContentView(R.layout.acg_activity);
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_main);

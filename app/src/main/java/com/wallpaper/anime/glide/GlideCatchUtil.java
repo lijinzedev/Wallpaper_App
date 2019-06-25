@@ -3,7 +3,7 @@ package com.wallpaper.anime.glide;
 import android.os.Looper;
 
 import com.bumptech.glide.Glide;
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class GlideCatchUtil {
     // 获取Glide磁盘缓存大小
     public String getCacheSize() {
         try {
-            return getFormatSize(getFolderSize(new File(Application.getInstance().getCacheDir() + "/" + GlideCatchConfig.GLIDE_CARCH_DIR)));
+            return getFormatSize(getFolderSize(new File(MyApplication.getInstance().getCacheDir() + "/" + GlideCatchConfig.GLIDE_CARCH_DIR)));
         } catch (Exception e) {
             e.printStackTrace();
             return "获取失败";
@@ -33,7 +33,7 @@ public class GlideCatchUtil {
 
     // 清除Glide磁盘缓存，自己获取缓存文件夹并删除方法
     public boolean cleanCatchDisk() {
-        return deleteFolderFile(Application.getInstance().getCacheDir() + "/" + GlideCatchConfig.GLIDE_CARCH_DIR, true);
+        return deleteFolderFile(MyApplication.getInstance().getCacheDir() + "/" + GlideCatchConfig.GLIDE_CARCH_DIR, true);
     }
 
     // 清除图片磁盘缓存，调用Glide自带方法
@@ -43,11 +43,11 @@ public class GlideCatchUtil {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Glide.get(Application.getInstance()).clearDiskCache();
+                        Glide.get(MyApplication.getInstance()).clearDiskCache();
                     }
                 }).start();
             } else {
-                Glide.get(Application.getInstance()).clearDiskCache();
+                Glide.get(MyApplication.getInstance()).clearDiskCache();
             }
             return true;
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class GlideCatchUtil {
     public boolean clearCacheMemory() {
         try {
             if (Looper.myLooper() == Looper.getMainLooper()) { //只能在主线程执行
-                Glide.get(Application.getInstance()).clearMemory();
+                Glide.get(MyApplication.getInstance()).clearMemory();
                 return true;
             }
         } catch (Exception e) {

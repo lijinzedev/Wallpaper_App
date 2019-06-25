@@ -33,7 +33,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.db.Picture;
@@ -167,7 +167,7 @@ public class PictureActivity extends BaseActivity {
     }
 
     public void MySetWallPaper(String path) {
-        WallpaperManager mWallManager = WallpaperManager.getInstance(Application.getInstance());
+        WallpaperManager mWallManager = WallpaperManager.getInstance(MyApplication.getInstance());
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             mWallManager.setBitmap(bitmap);
@@ -299,7 +299,7 @@ public class PictureActivity extends BaseActivity {
         Uri imageUri = null;
         if (file != null && file.exists() && file.isFile()) {
 //            imageUri = Uri.fromFile(file);
-            imageUri = FileProvider.getUriForFile(Application.getInstance(), "com.wallpaper.anime.fileprovider", file);
+            imageUri = FileProvider.getUriForFile(MyApplication.getInstance(), "com.wallpaper.anime.fileprovider", file);
         }
         return imageUri;
     }

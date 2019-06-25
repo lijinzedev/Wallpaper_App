@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import com.race604.drawable.wave.WaveDrawable;
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.R;
 import java.io.InputStream;
 import static org.litepal.LitePalApplication.getContext;
@@ -40,7 +40,7 @@ public class ResMsg {
 
     }
 
-    private static WaveDrawable INSTATCE = new WaveDrawable(Application.mContext, R.drawable.shalou);
+    private static WaveDrawable INSTATCE = new WaveDrawable(MyApplication.mContext, R.drawable.shalou);
 
     public static WaveDrawable getINSTATCE() {
         INSTATCE.setWaveSpeed(2);

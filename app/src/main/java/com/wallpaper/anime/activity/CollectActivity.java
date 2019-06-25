@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.R;
 
 import com.wallpaper.anime.cardtest.CardItemTouchHelperCallback;
@@ -210,7 +210,7 @@ public class CollectActivity extends BaseActivity {
 //                Log.d(TAG, "onBindViewHolder: "+"数据复用");
 //                Glide.with(CollectActivity.this).clear(((MyViewHolder) holder).avatarImageView);
 //            }
-            GlideApp.with(Application.mContext)
+            GlideApp.with(MyApplication.mContext)
                     .asBitmap()
                     .placeholder(R.drawable.white)
                     .error(R.drawable.white)
@@ -218,7 +218,7 @@ public class CollectActivity extends BaseActivity {
                     .load(imageUrl.getUrl())
                     .into(((MyViewHolder) holder).avatarImageView);
 
-            GlideApp.with(Application.mContext)
+            GlideApp.with(MyApplication.mContext)
                     .asBitmap()
                     .placeholder(R.drawable.white)
                     .error(R.drawable.white)

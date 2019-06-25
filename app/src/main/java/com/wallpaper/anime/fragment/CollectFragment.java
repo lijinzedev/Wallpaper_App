@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
@@ -265,7 +265,7 @@ public class CollectFragment extends Fragment {
                     public void onClick(View v) {
                         Picture url = list.get(holder.getAdapterPosition());
                         if (NetworkUtil.isNetworkAvailable(getContext())) {
-                            startActivity(PictureActivity.newIntent(Application.getInstance(), url.getUrl(), url_string_list, holder.getAdapterPosition()));
+                            startActivity(PictureActivity.newIntent(MyApplication.getInstance(), url.getUrl(), url_string_list, holder.getAdapterPosition()));
                         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -300,7 +300,7 @@ public class CollectFragment extends Fragment {
 //                Log.d(TAG, "onBindViewHolder: "+"数据复用");
 //                Glide.with(CollectActivity.this).clear(((MyViewHolder) holder).avatarImageView);
 //            }
-            GlideApp.with(Application.mContext)
+            GlideApp.with(MyApplication.mContext)
                     .asBitmap()
                     .placeholder(R.drawable.white)
                     .error(R.drawable.white)
@@ -308,7 +308,7 @@ public class CollectFragment extends Fragment {
                     .load(imageUrl.getUrl())
                     .into(((CollectFragment.MyAdapter.MyViewHolder) holder).avatarImageView);
 //
-//            GlideApp.with(Application.mContext)
+//            GlideApp.with(MyApplication.mContext)
 //                    .asBitmap()
 //                    .placeholder(R.drawable.white)
 //                    .error(R.drawable.white)

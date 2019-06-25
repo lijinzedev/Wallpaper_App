@@ -25,7 +25,7 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
@@ -255,7 +255,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Override
     public void onItemClick(String url, int position) {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
-            startActivity( PictureActivity.newIntent(Application.getInstance(),url_string_list.get(position),url_string_list,position));
+            startActivity( PictureActivity.newIntent(MyApplication.getInstance(),url_string_list.get(position),url_string_list,position));
             getActivity().overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
     }

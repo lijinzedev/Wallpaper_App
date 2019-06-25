@@ -16,11 +16,19 @@ android {
         renderscriptTargetApi 25
         renderscriptSupportModeEnabled true
     }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "wallpaper_release_${defaultConfig.versionName}.apk"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
     }
     compileOptions {
         sourceCompatibility = '1.8'
@@ -70,6 +78,19 @@ dependencies {
     implementation 'com.github.devlight:infinitecycleviewpager:1.0.2'
     implementation 'com.moxun:tagcloudlib:1.2.0' //3d滚动效果库
     implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
+    implementation 'com.qmuiteam:qmui:1.1.5'
+    implementation 'homhomlin.lib:sldinglayout:0.9.0'
+    implementation 'com.tbruyelle.rxpermissions:rxpermissions:0.9.4@aar'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'com.ogaclejapan.smarttablayout:library:1.6.1'
+    implementation 'com.jzxiang.pickerview:TimePickerDialog:0.9.2'
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'com.squareup.moshi:moshi:1.6.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.6.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'com.mph.okdroid:okdroid:1.0.0'
+    implementation 'com.github.clans:fab:1.6.4'
     implementation project(path: ':live2d')
 }
 repositories {

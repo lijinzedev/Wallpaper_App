@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
-import com.wallpaper.anime.Application;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
 import com.wallpaper.anime.cardtest.CardAdapterHelper;
@@ -56,7 +56,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
             }
         });
-        GlideApp.with(Application.mContext)
+        GlideApp.with(MyApplication.mContext)
                 .asBitmap()
                 .transition(BitmapTransitionOptions.withCrossFade())
                 .load(mList.get(position))

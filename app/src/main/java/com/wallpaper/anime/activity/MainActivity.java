@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private int currentIndex = 0;
     private TextView tv;
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "Dy_MainActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
