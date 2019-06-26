@@ -30,17 +30,17 @@ public class ViewTagsAdapter extends TagsAdapter {
     TextView tv;
     private SimpleTitleTip[] tips = {
 
-            new SimpleTitleTip(36, "4K专区"),
-            new SimpleTitleTip(6, "美女模特"),
+            new SimpleTitleTip(36, " 4K专区"),
+            new SimpleTitleTip(6, " 美女模特"),
             new SimpleTitleTip(30, "爱情美图"),
-            new SimpleTitleTip(9, "风景大片"),
+            new SimpleTitleTip(9, " 风景大片"),
             new SimpleTitleTip(15, "小清新"),
             new SimpleTitleTip(26, "动漫卡通"),
             new SimpleTitleTip(11, "明星风尚"),
             new SimpleTitleTip(14, "萌宠动物"),
-            new SimpleTitleTip(5, "游戏壁纸"),
+            new SimpleTitleTip(5, " 游戏壁纸"),
             new SimpleTitleTip(12, "汽车天下"),
-            new SimpleTitleTip(7, "影视剧照"),
+            new SimpleTitleTip(7, " 影视剧照"),
             new SimpleTitleTip(22, "军事天地"),
             new SimpleTitleTip(13, "节日美图"),
             new SimpleTitleTip(16, "劲爆体育"),
@@ -70,7 +70,7 @@ public class ViewTagsAdapter extends TagsAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.startActivity(CdnActivity.getIntent(context, tips[position].getId(),tips[position].getTip()));
+                context.startActivity(CdnActivity.getIntent(context, tips[position].getId(), tips[position].getTip()));
             }
         });
         switch (position) {

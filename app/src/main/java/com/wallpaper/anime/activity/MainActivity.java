@@ -1,5 +1,6 @@
 package com.wallpaper.anime.activity;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,14 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
 
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.db.SimpleTitleTip;
 import com.wallpaper.anime.fragment.AcgFragment;
-import com.wallpaper.anime.fragment.CdnFragment;
 import com.wallpaper.anime.fragment.CollectFragment;
+import com.wallpaper.anime.fragment.FlowerFragment;
 import com.wallpaper.anime.fragment.Fragment_for3d;
 import com.wallpaper.anime.fragment.HistoryFragment;
 import com.wallpaper.anime.menu.DrawerAdapter;
@@ -45,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private static final int POS_MESSAGES = 2;
     private static final int POS_CART = 3;
     private static final int POS_3D = 4;
-    private static final int POS_LOGOUT = 5;
-    private static final int Live_2d = 6;
+    private static final int POS_LOGOUT = 6;
+    private static final int PSOS_MOVIE = 5;
     private String[] screenTitles;
     private Drawable[] screenIcons;
     private SlidingRootNav slidingRootNav;
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private List<Fragment> fragments = new ArrayList<>();
     private static final String CURRENT_FRAGMENT = "STATE_FRAGMENT_SHOW";
     private int currentIndex = 0;
-    private TextView tv;
+
 
     private static final String TAG = "Dy_MainActivity";
 
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = findViewById(R.id.dingyue);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fragmentManager = getSupportFragmentManager();
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
             fragments.add(AcgFragment.createAcgFragment());
             fragments.add(CollectFragment.createAcgFragment());
             fragments.add(new HistoryFragment());
-            fragments.add(new CdnFragment());
+            fragments.add(new FlowerFragment());
             fragments.add(new Fragment_for3d());
         }
         slidingRootNav = new SlidingRootNavBuilder(this)
@@ -109,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 createItemFor(POS_MESSAGES),
                 createItemFor(POS_CART),
                 createItemFor(POS_3D),
+                createItemFor(PSOS_MOVIE),
                 new SpaceItem(48),
                 createItemFor(POS_LOGOUT)));
         adapter.setListener(this);
@@ -122,33 +122,39 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     @Override
     public void onItemSelected(int position) {
         switch (position) {
-
             case POS_LOGOUT:
                 finish();
                 break;
+
             case POS_DASHBOARD:
                 currentIndex = 0;
-                tv.setVisibility(View.GONE);
                 break;
+
             case POS_ACCOUNT:
                 currentIndex = 1;
-                tv.setVisibility(View.GONE);
                 break;
+
             case POS_MESSAGES:
                 currentIndex = 2;
-                tv.setVisibility(View.GONE);
                 break;
+
             case POS_CART:
                 currentIndex = 3;
-                tv.setVisibility(View.VISIBLE);
                 break;
+
             case POS_3D:
                 currentIndex = 4;
-                tv.setVisibility(View.GONE);
                 break;
+
+            case PSOS_MOVIE:
+                Intent intent = new Intent(MainActivity.this, Dy_MainActivity.class);
+                startActivity(intent);
+                break;
+
             default:
                 break;
         }
+
         showFragment();
 //
 //        if (position == POS_LOGOUT) {

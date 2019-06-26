@@ -59,15 +59,18 @@ public class CollectFragment extends Fragment {
 
     public CollectFragment() {
         EventBus.getDefault().register(this);
-        adapter = new CardAdapter(url_string_list, getActivity());
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        adapter = new CardAdapter(url_string_list, getActivity());
         view = inflater.inflate(R.layout.collect_fragment, null);
         mBlurView = view.findViewById(R.id.image_view);
+        list.clear();
+        bufferlist.clear();
+        url_string_list.clear();
         list = LitePal.order("id desc").limit(5).find(Picture.class);
         if (list.size() != 0) {
             for (Picture picture : list) {
@@ -202,11 +205,14 @@ public class CollectFragment extends Fragment {
     public void onEventMainThread(SimpleEventBus event) {
         if (event.getId() == 4) {
             list.clear();
+            bufferlist.clear();
+            url_string_list.clear();
             list = LitePal.order("id desc").limit(5).find(Picture.class);
             if (list.size() != 0) {
                 for (Picture picture : list) {
                     bufferlist.add(picture);
                     url_string_list.add(picture.getUrl());
+                    if (adapter!=null)
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -265,7 +271,7 @@ public class CollectFragment extends Fragment {
                     public void onClick(View v) {
                         Picture url = list.get(holder.getAdapterPosition());
                         if (NetworkUtil.isNetworkAvailable(getContext())) {
-                            startActivity(PictureActivity.newIntent(MyApplication.getInstance(), url.getUrl(), url_string_list, holder.getAdapterPosition()));
+                            startActivity(PictureActivity.newIntent(getActivity(), url.getUrl(), url_string_list, holder.getAdapterPosition()));
                         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
                     }
                 });

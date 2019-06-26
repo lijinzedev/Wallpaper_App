@@ -7,13 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.bean.CdnBean_item;
-import com.wallpaper.anime.dragview.EasyTipDragView;
 import com.wallpaper.anime.db.SimpleTitleTip;
+import com.wallpaper.anime.dragview.EasyTipDragView;
 import com.wallpaper.anime.dragview.TipDataModel;
 import com.wallpaper.anime.dragview.TipItemView;
 import com.wallpaper.anime.minterface.CndItemApi;
@@ -42,7 +41,6 @@ public class CdnFragment extends android.support.v4.app.Fragment {
     private String baseurl = "http://cdn.apc.360.cn/";
     private static final String TAG = "CdnFragment";
     private boolean flag = true;
-    TextView tv;
 
     @Override
     public void onStart() {
@@ -51,7 +49,7 @@ public class CdnFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onResume() {
-        tv.setVisibility(View.VISIBLE);
+
         super.onResume();
     }
 
@@ -180,24 +178,24 @@ public class CdnFragment extends android.support.v4.app.Fragment {
 
             }
         });
-        tv = getActivity().findViewById(R.id.dingyue);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (tv.getText().equals("订阅")) {
-                    easyTipDragView.open();
-                    tv.setText("完成");
-                } else {
-                    //完成关闭，回调数据
-                    easyTipDragView.dragTipAdapter.cancelEditingStatus();
-                    if (easyTipDragView.completeCallback != null) {
-                        easyTipDragView.completeCallback.onComplete(easyTipDragView.lists);
-                    }
-                    easyTipDragView.close();
-                    tv.setText("订阅");
-                }
-            }
-        });
+//        tv = getActivity().findViewById(R.id.dingyue);
+//        tv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (tv.getText().equals("订阅")) {
+//                    easyTipDragView.open();
+//                    tv.setText("完成");
+//                } else {
+//                    //完成关闭，回调数据
+//                    easyTipDragView.dragTipAdapter.cancelEditingStatus();
+//                    if (easyTipDragView.completeCallback != null) {
+//                        easyTipDragView.completeCallback.onComplete(easyTipDragView.lists);
+//                    }
+//                    easyTipDragView.close();
+//                    tv.setText("订阅");
+//                }
+//            }
+//        });
         return view;
     }
 

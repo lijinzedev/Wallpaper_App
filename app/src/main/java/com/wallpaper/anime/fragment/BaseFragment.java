@@ -25,7 +25,6 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
-import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.activity.PictureActivity;
@@ -50,14 +49,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 
 public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemClickListener, View.OnClickListener {
     private ParallaxRecyclerViewController mParallaxRecyclerViewController;
     private static final String TAG = "BaseFragment";
-    private List<String> url_string_list=new ArrayList<>();
+    private List<String> url_string_list = new ArrayList<>();
     private RecyclerView recyclerView;
     private BasePictureAdapter adapter;
     private String category;
@@ -85,9 +83,9 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         EventBus.getDefault().register(this);
-         view = inflater.inflate(R.layout.fragment_base, null);
-          initView(view);
+        EventBus.getDefault().register(this);
+        view = inflater.inflate(R.layout.fragment_base, null);
+        initView(view);
         return view;
     }
 
@@ -119,10 +117,10 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     private void lazyLoad() {
         //这里进行双重标记判断,是因为setUserVisibleHint会多次回调,并且会在onCreateView执行前回调,必须确保onCreateView加载完毕且页面可见,才加载数据
         if (isViewCreated && isUIVisible) {
-            //数据加载完毕,恢复标记,防止重复加载
-            isViewCreated = false;
-            isUIVisible = false;
-            requestData();
+                //数据加载完毕,恢复标记,防止重复加载
+                isViewCreated = false;
+                isUIVisible = false;
+                requestData();
         }
     }
 
@@ -135,11 +133,10 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         //
-             mParallaxRecyclerViewController = new ParallaxRecyclerViewController(linearLayoutManager, R.id.base_fragment_item_image);
-             recyclerView.addOnScrollListener(mParallaxRecyclerViewController);
-           ParallaxRecyclerViewController mParallaxRecyclerViewController = new ParallaxRecyclerViewController(linearLayoutManager, R.id.base_fragment_item_image);
-           recyclerView.addOnScrollListener(mParallaxRecyclerViewController);
-
+        mParallaxRecyclerViewController = new ParallaxRecyclerViewController(linearLayoutManager, R.id.base_fragment_item_image);
+        recyclerView.addOnScrollListener(mParallaxRecyclerViewController);
+        ParallaxRecyclerViewController mParallaxRecyclerViewController = new ParallaxRecyclerViewController(linearLayoutManager, R.id.base_fragment_item_image);
+        recyclerView.addOnScrollListener(mParallaxRecyclerViewController);
 
 
         adapter = new BasePictureAdapter(getContext(), recyclerView, url_string_list, this);
@@ -147,10 +144,11 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
         FloatingActionButton floatingActionButton = v.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(this);
     }
-    private Handler mhandler = new Handler(){
+
+    private Handler mhandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what==1) {
+            if (msg.what == 1) {
                 //get message
                 initView(view);
             }
@@ -159,15 +157,15 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
 
     private void initView(View v) {
         category = getArguments().getString("CATEGORY");
-        RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.base_recyclerview);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.base_recyclerview);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new BasePictureAdapter(getContext(), recyclerView, url_string_list, this);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         AnimationSet set = new AnimationSet(false);
-        WindowManager wm =getActivity().getWindowManager();
+        WindowManager wm = getActivity().getWindowManager();
         int height = wm.getDefaultDisplay().getHeight();
-        Animation animation = new TranslateAnimation(0,0,height,0); //translateanimation
+        Animation animation = new TranslateAnimation(0, 0, height, 0); //translateanimation
         animation.setDuration(1000);
         animation.setInterpolator(new AccelerateInterpolator(1.0F));
         set.addAnimation(animation);
@@ -205,7 +203,7 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     public void requestData() {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
             int curpage = Constant.getRandomPage(category);
-            Log.i(TAG, "requestData: " + "加载数据" + curpage+"链表长度: "+url_string_list.size());
+            Log.i(TAG, "requestData: " + "加载数据" + curpage + "链表长度: " + url_string_list.size());
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
             builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
@@ -227,12 +225,12 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
                             //urlList.add(dataBean);
                             url_string_list.addAll(dataBean.getImgUrls());
                         }
-                        Log.d(TAG, "onResponse: "+"链表长度: "+url_string_list.size());
+                        Log.d(TAG, "onResponse: " + "链表长度: " + url_string_list.size());
                         swipeRefresh.setRefreshing(false);
-                      //  adapter.notifyDataSetChanged();
+                        //  adapter.notifyDataSetChanged();
                         mhandler.sendEmptyMessage(1);
                         EventBus.getDefault().post(
-                                new SimpleEventBus(2,"end"));
+                                new SimpleEventBus(2, "end"));
                     }
                 }
 
@@ -246,7 +244,8 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
 
     @Override
     public void onClick(View v) {
-        url_string_list.clear();;
+        url_string_list.clear();
+
         adapter.notifyDataSetChanged();
         requestData();
     }
@@ -255,21 +254,22 @@ public class BaseFragment extends Fragment implements BasePictureAdapter.OnItemC
     @Override
     public void onItemClick(String url, int position) {
         if (NetworkUtil.isNetworkAvailable(getContext())) {
-            startActivity( PictureActivity.newIntent(MyApplication.getInstance(),url_string_list.get(position),url_string_list,position));
+            startActivity(PictureActivity.newIntent(getActivity(), url_string_list.get(position), url_string_list, position));
             getActivity().overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
         } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemLongClick(String url, int position) {
-//        Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
-//        requestPermission(url);
+//        Toast.makeText(getContext(), imageUrl, Toast.LENGTH_SHORT).show();
+//        requestPermission(imageUrl);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(SimpleEventBus event) {
 
         if (event.getId() == 1) {
-            Log.w(TAG, "onEventMainThread: "+"BaseFragment 刷新" );
+            Log.w(TAG, "onEventMainThread: " + "BaseFragment 刷新");
             Snackbar.make(swipeRefresh, R.string.reing, Snackbar.LENGTH_SHORT).show();
             requestData();
         }

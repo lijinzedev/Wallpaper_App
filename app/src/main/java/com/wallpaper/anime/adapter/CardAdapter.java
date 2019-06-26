@@ -29,7 +29,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     private List<String> mList = new ArrayList<>();
     private CardAdapterHelper mCardAdapterHelper = new CardAdapterHelper();
     private Activity activity;
-
     public CardAdapter(List<String> mList, Activity activity) {
         this.mList = mList;
         this.activity = activity;
@@ -39,7 +38,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_card_item, parent, false);
         final ViewHolder holder = new ViewHolder(itemView);
-
         mCardAdapterHelper.onCreateViewHolder(parent, itemView);
         return holder;
     }
@@ -53,7 +51,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
             public void onClick(View view) {
                 if (NetworkUtil.isNetworkAvailable(getContext())) {
                     activity.startActivity(PictureActivity.newIntent(activity, mList.get(position), mList, position));
-                } else Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(activity, "网络不可用", Toast.LENGTH_SHORT).show();
             }
         });
         GlideApp.with(MyApplication.mContext)

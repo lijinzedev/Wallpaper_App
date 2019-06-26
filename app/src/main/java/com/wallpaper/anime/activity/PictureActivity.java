@@ -1,9 +1,9 @@
 package com.wallpaper.anime.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,8 +33,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.EventBus.SimpleEventBus;
+import com.wallpaper.anime.MyApplication;
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.db.Picture;
 import com.wallpaper.anime.fragment.Picture_Fragment;
@@ -64,6 +64,7 @@ public class PictureActivity extends BaseActivity {
     List<String> mlist = new ArrayList<>();
     Toolbar toolbar;
     int postion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +73,7 @@ public class PictureActivity extends BaseActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         EventBus.getDefault().register(this);
-  //      toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        //      toolbar = (Toolbar) findViewById(R.id.toolbar2);
 //        setSupportActionBar(toolbar);
 //        ActionBar actionBar = getSupportActionBar();
 //        if (actionBar != null) {
@@ -88,7 +89,6 @@ public class PictureActivity extends BaseActivity {
                 collect(view);
             }
         });
-
 
 
         mViewPager = findViewById(R.id.vp_picture);
@@ -116,8 +116,8 @@ public class PictureActivity extends BaseActivity {
             control_layuout.setVisibility(View.GONE);
             fab.hide();
         } else {
-            control_layuout.setVisibility(View.VISIBLE);
-            fab.show();
+//            control_layuout.setVisibility(View.VISIBLE);
+//            fab.show();
         }
 
         //Record last browse location
@@ -305,17 +305,17 @@ public class PictureActivity extends BaseActivity {
     }
 
     public void changeVisible(View view) {
-        if (control_layuout.getVisibility() == View.VISIBLE) {
-
-            control_layuout.setVisibility(View.GONE);
-            fab.hide();
-        } else {
-            control_layuout.setVisibility(View.VISIBLE);
-            if (collectflag == 11)
-                fab.hide();
-            else
-                fab.show();
-        }
+//        if (control_layuout.getVisibility() == View.VISIBLE) {
+//
+//            control_layuout.setVisibility(View.GONE);
+//            fab.hide();
+//        } else {
+//            control_layuout.setVisibility(View.VISIBLE);
+//            if (collectflag == 11)
+//                fab.hide();
+//            else
+//                fab.show();
+//        }
     }
 
     @Override
@@ -337,25 +337,25 @@ public class PictureActivity extends BaseActivity {
 
     private void intiData() {
         //   get  the  value  of  the  intent  tag
-        postion=getIntent().getIntExtra("postion",0);
+        postion = getIntent().getIntExtra("postion", 0);
         imageUrl = getIntent().getStringExtra(URL);
         mlist = (List<String>) getIntent().getSerializableExtra(LIST);
 
     }
 
     //config intent
-    public static Intent newIntent(Context context, String url, List<String> fruitList,int postion) {
+    public static Intent newIntent(Activity context, String url, List<String> fruitList, int postion) {
         Intent intent = new Intent(context, PictureActivity.class);
         intent.putExtra(URL, url);
         intent.putExtra(LIST, (Serializable) fruitList);
-        intent.putExtra("postion",postion);
+        intent.putExtra("postion", postion);
         return intent;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(SimpleEventBus event) {
         if (event.getId() == 2) {
-            Log.w(TAG, "onEventMainThread: "+"PictureActivity接收总线" );
+            Log.w(TAG, "onEventMainThread: " + "PictureActivity接收总线");
             Snackbar.make(toolbar, R.string.re_success, Snackbar.LENGTH_SHORT).show();
             intiData();
             mViewPager.getAdapter().notifyDataSetChanged();

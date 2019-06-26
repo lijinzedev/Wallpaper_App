@@ -1,6 +1,5 @@
 package com.wallpaper.anime.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.widget.Button;
 
 import com.moxun.tagcloudlib.view.TagCloudView;
 import com.wallpaper.anime.R;
-import com.wallpaper.anime.activity.Dy_MainActivity;
 import com.wallpaper.anime.adapter.ViewTagsAdapter;
 
 public class Fragment_for3d extends android.support.v4.app.Fragment{
@@ -32,8 +30,7 @@ public class Fragment_for3d extends android.support.v4.app.Fragment{
 //                Intent intent=new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
 //                intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,new ComponentName(getActivity(),LiveWallpaperService.class));
 //                startActivity(intent);
-                Intent intent=new Intent(getContext(),Dy_MainActivity.class);
-                startActivity(intent);
+
             }
         });
 

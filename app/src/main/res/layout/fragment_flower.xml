@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/city_blur0">
+
+    <com.yinglan.shadowimageview.ShadowImageView
+
+        android:id="@+id/live2d"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="152dp"
+        android:background="@drawable/live2d_picture"
+        app:shadowColor="#3f9c6c"
+        app:shadowRound="20dp" />
+
+    <com.yinglan.shadowimageview.ShadowImageView
+        android:layout_marginTop="25dp"
+        android:id="@+id/movies"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:background="@drawable/movies"
+        app:shadowColor="#3484df"
+        app:shadowRound="20dp" />
+
+    <com.yinglan.shadowimageview.ShadowImageView
+        android:id="@+id/photo"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        app:shadowColor="@color/colorAccent"
+        app:shadowRound="20dp" />
+
+</RelativeLayout>

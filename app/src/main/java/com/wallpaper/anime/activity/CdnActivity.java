@@ -126,7 +126,7 @@ public class CdnActivity extends BaseActivity {
         String title = getIntent().getStringExtra("title");
         toolbar.setTitle(title);
         toolbar.getBackground().setAlpha(200);
-        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setTitleTextColor(Color.BLACK);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

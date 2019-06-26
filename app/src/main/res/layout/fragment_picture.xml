@@ -1,21 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000">
+    android:background="#46d9a7">
+
+
+    <com.ldoublem.loadingviewlib.view.LVGhost
+        android:id="@+id/lv_ghost"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.ortiz.touchview.TouchImageView
         android:id="@+id/picture_big"
         android:layout_width="match_parent"
-
-        android:transitionName="transitionImg"
         android:layout_height="match_parent"
         android:contentDescription="@string/image"
         android:onClick="changeVisible"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:transitionName="transitionImg" />
 
 
-</RelativeLayout>
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu_labels_right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="15dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_position="left"
+        fab:menu_labels_singleLine="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floattin_set"
+            style="@style/yellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_float_wappller"
+            fab:fab_label="快来设置壁纸体验一下吧(๑•̀ㅂ•́)و✧"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+
+            android:id="@+id/floattin_down"
+            style="@style/orange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_float_dowlond"
+            fab:fab_label="喜欢就点击下载吧o(￣▽￣)ｄ"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floattin_share"
+            style="@style/green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_float_share"
+            fab:fab_label="和好朋友分享一下喽(u‿ฺu✿ฺ)"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floattin_star"
+            style="@style/blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star"
+            fab:fab_label="喜欢就点我把╰(￣▽￣)╭"
+            fab:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.constraint.ConstraintLayout>

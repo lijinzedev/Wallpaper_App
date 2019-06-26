@@ -15,7 +15,7 @@
     </style>
     <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!--底部导航引用颜色值-->
-        <item name="colorPrimary">#FF69B4</item>
+        <item name="colorPrimary">#ff5c5c</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/white</item>
     </style>
@@ -51,5 +51,32 @@
         <item name="android:clickable">true</item>
         <item name="android:enabled">true</item>
         <item name="android:textColor">#ccffffff</item>
+    </style>
+
+
+    <style name="blue">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">#1565C0</item>
+        <item name="fab_colorPressed">#2272CD</item>
+        <item name="fab_colorRipple">#62B2FF</item>
+    </style>
+    <style name="green">
+        <item name="fab_size">mini</item>
+
+        <item name="fab_colorNormal">#2cdfa4</item>
+        <item name="fab_colorPressed">#46d9a7</item>
+        <item name="fab_colorRipple">#97e4ca</item>
+    </style>
+    <style name="yellow">"
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">#FFB805</item>
+        <item name="fab_colorPressed">#F2AB00</item>
+        <item name="fab_colorRipple">#D99200</item>
+    </style>
+    <style name="orange">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">#03b8cc</item>
+        <item name="fab_colorPressed">#03cfe6</item>
+        <item name="fab_colorRipple">#02e2fa</item>
     </style>
 </resources>
