@@ -96,7 +96,8 @@ dependencies {
     implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    implementation 'com.yinglan.shadowimageview:shadowimageview:1.0.4'
+    implementation 'com.yinglan.shadowimageview:shadowimageview:1.0.4'  //悬浮按钮
+    implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:2.0.24' // viewpager 在live2的模块使用
     implementation project(path: ':live2d')
 }
 repositories {

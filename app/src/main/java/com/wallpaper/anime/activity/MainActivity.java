@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.wallpaper.anime.R;
 import com.wallpaper.anime.db.SimpleTitleTip;
@@ -27,6 +28,7 @@ import com.wallpaper.anime.menu.DrawerAdapter;
 import com.wallpaper.anime.menu.DrawerItem;
 import com.wallpaper.anime.menu.SimpleItem;
 import com.wallpaper.anime.menu.SpaceItem;
+import com.wallpaper.anime.util.CircularAnim;
 import com.wallpaper.slidingrootnav.SlidingRootNav;
 import com.wallpaper.slidingrootnav.SlidingRootNavBuilder;
 
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
     private List<Fragment> fragments = new ArrayList<>();
     private static final String CURRENT_FRAGMENT = "STATE_FRAGMENT_SHOW";
     private int currentIndex = 0;
-
-
     private static final String TAG = "Dy_MainActivity";
 
     @Override
@@ -147,8 +147,15 @@ public class MainActivity extends AppCompatActivity implements DrawerAdapter.OnI
                 break;
 
             case PSOS_MOVIE:
-                Intent intent = new Intent(MainActivity.this, Dy_MainActivity.class);
-                startActivity(intent);
+                CircularAnim.fullActivity(MainActivity.this, (View) slidingRootNav)
+                        .colorOrImageRes(R.color.bluesky)  //注释掉，因为该颜色已经在App.class 里配置为默认色
+                        .go(new CircularAnim.OnAnimationEndListener() {
+                            @Override
+                            public void onAnimationEnd() {
+                                Intent intent = new Intent(MainActivity.this, Dy_MainActivity.class);
+                                startActivity(intent);
+                            }
+                        });
                 break;
 
             default:

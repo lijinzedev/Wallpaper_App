@@ -6,11 +6,11 @@ import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -18,14 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.ldoublem.loadingviewlib.view.LVGhost;
 import com.ortiz.touchview.TouchImageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.wallpaper.anime.MyApplication;
@@ -39,16 +40,31 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class PictureView extends BaseActivity {
 
     private static final String TAG = "PictureActivity";
+    @BindView(R.id.lv_ghost)
+    LVGhost lvGhost;
+    @BindView(R.id.floattin_set)
+    FloatingActionButton floattinSet;
+    @BindView(R.id.floattin_down)
+    FloatingActionButton floattinDown;
+    @BindView(R.id.floattin_share)
+    FloatingActionButton floattinShare;
+    @BindView(R.id.floattin_star)
+    FloatingActionButton floattinStar;
+    @BindView(R.id.menu_labels_right)
+    FloatingActionMenu menuLabelsRight;
+    @BindView(R.id.picture_big)
+    TouchImageView touchImageView;
+
     private String imageUrl;
-    private LinearLayout control_layuout;
-    FloatingActionButton fab;
     private Picture picture;
     private int collectflag; //收藏标签
-    private TouchImageView touchImageView;
-    private ImageView imageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,43 +73,73 @@ public class PictureView extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_pictureview);
+        ButterKnife.bind(this);
+
+
         collectflag = getIntent().getIntExtra("collect", 0);
         imageUrl = getIntent().getStringExtra("IMGURL");
-        control_layuout = findViewById(R.id.control_layuout);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        /**
-         * 缓冲动画
-         */
-        fab.setOnClickListener(new View.OnClickListener() {
+        floattinSet.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                collect(view);
+            public void onClick(View v) {
+                menuLabelsRight.close(true);
+                setWallpaper(v);
             }
         });
-        touchImageView = findViewById(R.id.iv_full);
+        floattinDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuLabelsRight.close(true);
+                download(v);
+            }
+        });
+        floattinShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuLabelsRight.close(true);
+                share(v);
+            }
+        });
+        floattinStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuLabelsRight.close(true);
+
+                collect(v);
+            }
+        });
+
+
+        /*
+         * Note :the photoview is a picture zoom view
+         *but I used Glide to load pictures,and I have a problem
+         *Glide has cache policy,causing picture loading to be abnormal
+         * so i delete the photoview and find a new; please waitting for me;
+         * */
+
+        lvGhost.setVisibility(View.VISIBLE);
+        lvGhost.setViewColor(Color.WHITE);
+        lvGhost.setHandColor(Color.BLACK);
+        lvGhost.startAnim();
         new Thread(() -> {
             try {
                 Bitmap bitmap = GlideApp.with(this)
                         .asBitmap()
                         .load(imageUrl)
                         .submit().get();
-                runOnUiThread(() -> {
-                    touchImageView.setImageBitmap(bitmap);
-                });
+                if (this != null)
+                    this.runOnUiThread(() -> {
+
+                        touchImageView.setImageBitmap(bitmap);
+                        menuLabelsRight.setVisibility(View.VISIBLE);
+                        lvGhost.setVisibility(View.GONE);
+                        lvGhost.stopAnim();
+                    });
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
-        if (control_layuout.getVisibility() == View.VISIBLE) {
-
-            control_layuout.setVisibility(View.GONE);
-            fab.hide();
-        } else {
-            control_layuout.setVisibility(View.VISIBLE);
-            fab.show();
-        }
     }
 
 
@@ -310,17 +356,7 @@ public class PictureView extends BaseActivity {
     }
 
     public void changeVisible(View view) {
-        if (control_layuout.getVisibility() == View.VISIBLE) {
 
-            control_layuout.setVisibility(View.GONE);
-            fab.hide();
-        } else {
-            control_layuout.setVisibility(View.VISIBLE);
-            if (collectflag == 11)
-                fab.hide();
-            else
-                fab.show();
-        }
     }
 
     @Override
@@ -331,11 +367,7 @@ public class PictureView extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//           finishAfterTransition();
-//        }else
         finish();
         overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
     }

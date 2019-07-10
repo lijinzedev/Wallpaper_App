@@ -73,13 +73,6 @@ public class PictureActivity extends BaseActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_picture);
         EventBus.getDefault().register(this);
-        //      toolbar = (Toolbar) findViewById(R.id.toolbar2);
-//        setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
         collectflag = getIntent().getIntExtra("collect", 0);
         control_layuout = findViewById(R.id.control_layuout);
         fab = (FloatingActionButton) findViewById(R.id.fab);

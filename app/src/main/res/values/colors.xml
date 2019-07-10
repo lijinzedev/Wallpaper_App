@@ -36,6 +36,8 @@
     <color name="font_blue">#5178b4</color>
     <color name="gray_color">#999</color>
     <color name="divider_color">#eee</color>
+    <color name="bluesky">#B0E2FF</color>
+
     <color name="sred">#ff5c5c</color>
     <color name="tagLight">#b1c914</color>
     <color name="tagDark">#206fa1</color>
